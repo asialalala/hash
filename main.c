@@ -8,6 +8,7 @@
 // #include <stdbool.h>           // bool
 
 #define WORDS_NR 14 //1000
+#define LINE_LEN 200
 #define WORD_LEN 100
 #define USER_NR 5
 
@@ -24,7 +25,6 @@ struct user userTab[USER_NR];
 
 /* tworzy zahaszowane slowo md5buf na podstawie slowa data o długości len */
 void bytes2md5(const char *data, int len, char *md5buf) {
-    printf("Haszuje ...\n");
 	EVP_MD_CTX *mdctx = EVP_MD_CTX_new();
 	const EVP_MD *md = EVP_md5();
 	unsigned char md_value[EVP_MAX_MD_SIZE];
@@ -43,7 +43,8 @@ void compareHash(char * gess)
 {
     for(int i = 0; i < USER_NR; i++)
     {
-        if(strcmp(gess, userTab[i].pass ))
+        //printf("    Porownuje z %s\n", userTab[i].pass);
+        if(!strcmp(gess, userTab[i].pass ))
             printf("    znaleziono: %s \n", gess);
     }
 }
@@ -57,8 +58,9 @@ void findPass()
 
     for(int i = 0; i < WORDS_NR; i++)
     {
-        printf("%d. slowo: %s \n", i, wordTab[i]);
+        printf("%d. slowo: %s\n", i, wordTab[i]);
         bytes2md5(wordTab[i], strlen(wordTab[i]) , hashGess);
+        printf("W wersji zahaszowanej: %s\n", hashGess);
         compareHash(hashGess);
     }
 }
@@ -67,11 +69,11 @@ void findPass()
 /* czyta dane urzytkownika */
 void readUser(FILE * file)
 {
-    char line[200];
+    char line[LINE_LEN];
     char * tmp;
     int i = 0;
     printf("Czytam base urzytkownikow...\n");
-    while(fgets(line, 200, file))
+    while(fgets(line, LINE_LEN, file))
     {
         tmp = strtok(line, "\t");
         if(tmp != NULL)
@@ -104,11 +106,15 @@ void readUser(FILE * file)
 /* czyta dane słownik */
 void readWords(FILE * file)
 {
+    char line[LINE_LEN];
+    char * tmp;
     int i = 0;
     printf("Czytam slownik...\n");
-    while(fgets(wordTab[i], 100, file))
+    while(fgets(line, LINE_LEN, file))
     {
-        printf("%s \n", wordTab[i]);
+        tmp = strtok(line, "\n");
+        strcpy(wordTab[i], tmp); //czytaj ID
+        printf("%s\n", wordTab[i]);
         i++;
     }
 }
