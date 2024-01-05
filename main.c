@@ -45,7 +45,7 @@ void compareHash(char * gess)
     {
         //printf("    Porownuje z %s\n", userTab[i].pass);
         if(!strcmp(gess, userTab[i].pass ))
-            printf("    znaleziono: %s \n", gess);
+            printf("======= Haslo dla %s: %s =======\n", userTab[i].name, gess);
     }
 }
 
