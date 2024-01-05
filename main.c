@@ -80,27 +80,36 @@ void readUser(FILE * file)
         {   
             strcpy(userTab[i].id, tmp); //czytaj ID
             printf("id: %s \t", userTab[i].id);
+        }else{
+            printf("Blad poczas wczytywania id uzytkownika.\n");
         }
         tmp = strtok(NULL, " \t"); // kontynuuj czytanie linii
         if(tmp != NULL)
         {
             strcpy(userTab[i].pass, tmp); // czytaj haslo
             printf("pass: %s \t", userTab[i].pass);
+        }else{
+           printf("Blad poczas wczytywania hasla uzytkownika.\n");
         }
         tmp = strtok(NULL, "\t"); // kontynuuj czytanie linii
         if(tmp != NULL)
         {
             strcpy(userTab[i].mail, tmp); // czytaj mail
             printf("mail: %s \t", userTab[i].mail);
+        }else{
+            printf("Blad poczas wczytywania maila uzytkownika.\n");
         }
         tmp = strtok(NULL, "\n"); // kontynuuj czytanie linii
         if(tmp != NULL)
         {
             strcpy(userTab[i].name, tmp); // czytaj nazwe
             printf("name: %s \n", userTab[i].name);
+        }else{
+            printf("Blad poczas wczytywania nazwy uzytkownika.\n");
         }
         i++;
     }
+    printf("Wczytano %d zestawow danych.\n", i);
 }
 
 /* czyta dane słownik */
