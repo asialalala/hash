@@ -11,7 +11,7 @@
 #define WORDS_NR 14 //1000
 #define LINE_LEN 200
 #define WORD_LEN 100
-#define USER_NR 5
+#define USER_NR 11
 #define DOUBLE_DIGIT 100
 
 struct user
@@ -41,13 +41,13 @@ void bytes2md5(const char *data, int len, char *md5buf) {
 }
 
 /* sprawdza czy haslo gess znajduje sie w tablicy hasel userTab*/
-void compareHash(char * gess)
+void compareHash(char * gess, char * pass)
 {
     for(int i = 0; i < USER_NR; i++)
     {
-        //printf("    Porownuje z %s\n", userTab[i].pass);
+        // printf("    Porownuje %s z %s\n", gess, userTab[i].pass);
         if(!strcmp(gess, userTab[i].pass ))
-            printf("======= Haslo dla %s: %s =======\n", userTab[i].name, gess);
+            printf("======= Haslo dla %s: %s =======\n", userTab[i].name, pass);
     }
 }
 
@@ -60,10 +60,10 @@ void basicScounting()
 
     for(int i = 0; i < WORDS_NR; i++)
     {
-        printf("%d. slowo: %s\n", i, wordTab[i]);
+        // printf("%d. slowo: %s\n", i, wordTab[i]);
         bytes2md5(wordTab[i], strlen(wordTab[i]) , hashGess);
-        printf("W wersji zahaszowanej: %s\n", hashGess);
-        compareHash(hashGess);
+        // printf("W wersji zahaszowanej: %s\n", hashGess);
+        compareHash(hashGess, wordTab[i]);
     }
 }
 
@@ -76,36 +76,62 @@ void prefixScounting()
     char newWord[WORD_LEN];
     for(int i = 0; i < WORDS_NR; i++)
     {
-        printf("%d. Slowo bazowe: %s\n", i, wordTab[i]);
+        // printf("%d. Slowo bazowe: %s\n", i, wordTab[i]);
         for(int prefix = 0; prefix < DOUBLE_DIGIT; prefix++)
         {
             snprintf(newWord, WORD_LEN, "%d%s", prefix, wordTab[i]);
-            printf("    Slowo z prefixem %s.\n", newWord);
+            // printf("    Slowo z prefixem %s.\n", newWord);
             bytes2md5(newWord, strlen(newWord) , hashGess);
-            printf("W wersji zahaszowanej: %s\n", hashGess);
-            compareHash(hashGess);
+            // printf("W wersji zahaszowanej: %s\n", hashGess);
+            compareHash(hashGess, newWord);
         }
         
     }
 }
 
-// szuka hasel z prefiksami
+// szuka hasel z postfiksami
 void postfixScounting()
 {
-    printf("Szukam hasel z prefiksami...\n");
+    printf("Szukam hasel z postfiksami...\n");
 
     char hashGess[33];
     char newWord[WORD_LEN];
     for(int i = 0; i < WORDS_NR; i++)
     {
-        printf("%d. Slowo bazowe: %s\n", i, wordTab[i]);
-        for(int postfix = 0; postfix < DOUBLE_DIGIT; postfix++)
+        // printf("%d. Slowo bazowe: %s\n", i, wordTab[i]);
+        for(int postfix = 0; postfix < 10; postfix++)
         {
-            snprintf(newWord, WORD_LEN, "%s%d", wordTab[i], postfix);
-            printf("    Slowo z postfixem %s.\n", newWord);
+            snprintf(newWord, WORD_LEN, "%s%d%c", wordTab[i], postfix, '\0');
+            // printf("    Slowo z postfixem %s.\n", newWord);
             bytes2md5(newWord, strlen(newWord) , hashGess);
-            printf("W wersji zahaszowanej: %s\n", hashGess);
-            compareHash(hashGess);
+            // printf("W wersji zahaszowanej: %s\n", hashGess);
+            compareHash(hashGess, newWord);
+        }
+        
+    }
+}
+
+// szuka chasel z prefiksami i postfiksami
+void postfixAndPrefixScounting()
+{
+    printf("Szukam hasel z prefiksami i postfiksami...\n");
+
+    char hashGess[33];
+    char newWord[WORD_LEN];
+    for(int i = 0; i < WORDS_NR; i++)
+    {
+        // printf("%d. Slowo bazowe: %s\n", i, wordTab[i]);
+        for(int prefix = 0; prefix < DOUBLE_DIGIT; prefix++)
+        {
+            for(int postfix = 0; postfix < DOUBLE_DIGIT; postfix++)
+            {
+                snprintf(newWord, WORD_LEN, "%d%s%d%c", prefix, wordTab[i], postfix, '\0');
+                // printf("    Slowo z postfixem %s.\n", newWord);
+                bytes2md5(newWord, strlen(newWord) , hashGess);
+                // printf("W wersji zahaszowanej: %s\n", hashGess);
+                compareHash(hashGess, newWord);
+            }
+
         }
         
     }
@@ -125,7 +151,7 @@ void readUser(FILE * file)
         if(tmp != NULL)
         {   
             strcpy(userTab[i].id, tmp); //czytaj ID
-            printf("id: %s \t", userTab[i].id);
+            // printf("id: %s \t", userTab[i].id);
         }else{
             printf("Blad poczas wczytywania id uzytkownika.\n");
         }
@@ -133,7 +159,7 @@ void readUser(FILE * file)
         if(tmp != NULL)
         {
             strcpy(userTab[i].pass, tmp); // czytaj haslo
-            printf("pass: %s \t", userTab[i].pass);
+            // printf("pass: %s \t", userTab[i].pass);
         }else{
            printf("Blad poczas wczytywania hasla uzytkownika.\n");
         }
@@ -141,7 +167,7 @@ void readUser(FILE * file)
         if(tmp != NULL)
         {
             strcpy(userTab[i].mail, tmp); // czytaj mail
-            printf("mail: %s \t", userTab[i].mail);
+            // printf("mail: %s \t", userTab[i].mail);
         }else{
             printf("Blad poczas wczytywania maila uzytkownika.\n");
         }
@@ -149,7 +175,7 @@ void readUser(FILE * file)
         if(tmp != NULL)
         {
             strcpy(userTab[i].name, tmp); // czytaj nazwe
-            printf("name: %s \n", userTab[i].name);
+            // printf("name: %s \n", userTab[i].name);
         }else{
             printf("Blad poczas wczytywania nazwy uzytkownika.\n");
         }
@@ -169,7 +195,7 @@ void readWords(FILE * file)
     {
         tmp = strtok(line, "\n");
         strcpy(wordTab[i], tmp); //czytaj ID
-        printf("%s\n", wordTab[i]);
+        // printf("%s\n", wordTab[i]);
         i++;
     }
 }
@@ -205,9 +231,10 @@ int main(int argc, char * argv[])
     fclose(fPass);
     fclose(fWord);
 
-    //basicScounting();
-    //prefixScounting();
+    basicScounting();
+    prefixScounting();
     postfixScounting();
+    postfixAndPrefixScounting();
 
     return EXIT_SUCCESS;
 }

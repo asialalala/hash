@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>             // strcpy, strcmp
 #include <openssl/evp.h>       // EVP_MD_CTX, EVP_MD_CTX_new...
-#define MY_WORD "woman"
+#define MY_WORD "wonder"
 
 void bytes2md5(const char *data, int len, char *md5buf) {
 	EVP_MD_CTX *mdctx = EVP_MD_CTX_new();
@@ -35,3 +35,4 @@ int main()
 
     return 0;
 }
+//45d2af4ee88248ec0e5cde4aeec5d382 2wonder
