@@ -89,6 +89,28 @@ void prefixScounting()
     }
 }
 
+// szuka hasel z prefiksami
+void postfixScounting()
+{
+    printf("Szukam hasel z prefiksami...\n");
+
+    char hashGess[33];
+    char newWord[WORD_LEN];
+    for(int i = 0; i < WORDS_NR; i++)
+    {
+        printf("%d. Slowo bazowe: %s\n", i, wordTab[i]);
+        for(int postfix = 0; postfix < DOUBLE_DIGIT; postfix++)
+        {
+            snprintf(newWord, WORD_LEN, "%s%d", wordTab[i], postfix);
+            printf("    Slowo z postfixem %s.\n", newWord);
+            bytes2md5(newWord, strlen(newWord) , hashGess);
+            printf("W wersji zahaszowanej: %s\n", hashGess);
+            compareHash(hashGess);
+        }
+        
+    }
+}
+
 
 /* czyta dane urzytkownika */
 void readUser(FILE * file)
@@ -184,7 +206,8 @@ int main(int argc, char * argv[])
     fclose(fWord);
 
     //basicScounting();
-    prefixScounting();
+    //prefixScounting();
+    postfixScounting();
 
     return EXIT_SUCCESS;
 }
