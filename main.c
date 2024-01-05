@@ -1,9 +1,10 @@
 // make
-// test1: ./decrypt.out hasla1 slownik1 
+// test1: ./decrypt.out Users/hasla1.txt Dictionaries/slownik1.txt 
+// test2: ./decrypt.out Users/hasla2.txt Dictionaries/slownik2.txt 
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>             // strcpy, strcmp
+#include <string.h>             // strcpy, strcmp, strcat
 #include <openssl/evp.h>       // EVP_MD_CTX, EVP_MD_CTX_new...
 // #include <stdbool.h>           // bool
 
@@ -11,6 +12,7 @@
 #define LINE_LEN 200
 #define WORD_LEN 100
 #define USER_NR 5
+#define DOUBLE_DIGIT 100
 
 struct user
 {
@@ -50,7 +52,7 @@ void compareHash(char * gess)
 }
 
 /* tworzy hasze na podstawie calego slownika i sprawdza czy znajduje sie takie w tablicy hasel*/
-void findPass()
+void basicScounting()
 {
     printf("Szukam hasel ...\n");
 
@@ -62,6 +64,28 @@ void findPass()
         bytes2md5(wordTab[i], strlen(wordTab[i]) , hashGess);
         printf("W wersji zahaszowanej: %s\n", hashGess);
         compareHash(hashGess);
+    }
+}
+
+// szuka hasel z prefiksami
+void prefixScounting()
+{
+    printf("Szukam hasel z prefiksami...\n");
+
+    char hashGess[33];
+    char newWord[WORD_LEN];
+    for(int i = 0; i < WORDS_NR; i++)
+    {
+        printf("%d. Slowo bazowe: %s\n", i, wordTab[i]);
+        for(int prefix = 0; prefix < DOUBLE_DIGIT; prefix++)
+        {
+            snprintf(newWord, WORD_LEN, "%d%s", prefix, wordTab[i]);
+            printf("    Slowo z prefixem %s.\n", newWord);
+            bytes2md5(newWord, strlen(newWord) , hashGess);
+            printf("W wersji zahaszowanej: %s\n", hashGess);
+            compareHash(hashGess);
+        }
+        
     }
 }
 
@@ -159,7 +183,8 @@ int main(int argc, char * argv[])
     fclose(fPass);
     fclose(fWord);
 
-    findPass();
+    //basicScounting();
+    prefixScounting();
 
     return EXIT_SUCCESS;
 }
