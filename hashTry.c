@@ -1,4 +1,4 @@
-//gcc -pedantic -Wall hashTry.c -o try.out -lssl -lcrypto -pthread
+//gcc -pedantic -Wall Out/hashTry.c -o try.out -lssl -lcrypto -pthread
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>             // strcpy, strcmp
@@ -28,3 +28,4 @@ int main()
     return 0;
 }
 //56609ab6ba04048adc2cbfafbe745e10
+// 333d43d561955c5abd6f985c2dc5fab1
