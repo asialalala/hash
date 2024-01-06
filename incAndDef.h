@@ -11,6 +11,6 @@
 #define WORDS_NR 14 //1000
 #define LINE_LEN 200
 #define WORD_LEN 100
-#define USER_NR 11
+#define USER_NR 21
 #define DOUBLE_DIGIT 100
 #endif

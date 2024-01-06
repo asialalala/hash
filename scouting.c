@@ -27,7 +27,7 @@ void compareHash(char * gess, char * pass)
 }
 
 /* tworzy hasze na podstawie calego slownika i sprawdza czy znajduje sie takie w tablicy hasel*/
-void basicScounting()
+void basicScounting(char tab[WORDS_NR][WORD_LEN])
 {
     printf("Szukam hasel ...\n");
 
@@ -35,15 +35,15 @@ void basicScounting()
 
     for(int i = 0; i < WORDS_NR; i++)
     {
-        // printf("%d. slowo: %s\n", i, wordsTab[i]);
-        bytes2md5(wordsTab[i], strlen(wordsTab[i]) , hashGess);
+        // printf("%d. slowo: %s\n", i, tab[i]);
+        bytes2md5(tab[i], strlen(tab[i]) , hashGess);
         // printf("W wersji zahaszowanej: %s\n", hashGess);
-        compareHash(hashGess, wordsTab[i]);
+        compareHash(hashGess, tab[i]);
     }
 }
 
 // szuka hasel z prefiksami
-void prefixScounting()
+void prefixScounting(char tab[WORDS_NR][WORD_LEN])
 {
     printf("Szukam hasel z prefiksami...\n");
 
@@ -51,10 +51,10 @@ void prefixScounting()
     char newWord[WORD_LEN];
     for(int i = 0; i < WORDS_NR; i++)
     {
-        // printf("%d. Slowo bazowe: %s\n", i, wordsTab[i]);
+        // printf("%d. Slowo bazowe: %s\n", i, tab[i]);
         for(int prefix = 0; prefix < DOUBLE_DIGIT; prefix++)
         {
-            snprintf(newWord, WORD_LEN, "%d%s", prefix, wordsTab[i]);
+            snprintf(newWord, WORD_LEN, "%d%s", prefix, tab[i]);
             // printf("    Slowo z prefixem %s.\n", newWord);
             bytes2md5(newWord, strlen(newWord) , hashGess);
             // printf("W wersji zahaszowanej: %s\n", hashGess);
@@ -65,7 +65,7 @@ void prefixScounting()
 }
 
 // szuka hasel z postfiksami
-void postfixScounting()
+void postfixScounting(char tab[WORDS_NR][WORD_LEN])
 {
     printf("Szukam hasel z postfiksami...\n");
 
@@ -73,10 +73,10 @@ void postfixScounting()
     char newWord[WORD_LEN];
     for(int i = 0; i < WORDS_NR; i++)
     {
-        // printf("%d. Slowo bazowe: %s\n", i, wordsTab[i]);
-        for(int postfix = 0; postfix < 10; postfix++)
+        // printf("%d. Slowo bazowe: %s\n", i, tab[i]);
+        for(int postfix = 0; postfix < DOUBLE_DIGIT; postfix++)
         {
-            snprintf(newWord, WORD_LEN, "%s%d%c", wordsTab[i], postfix, '\0');
+            snprintf(newWord, WORD_LEN, "%s%d%c", tab[i], postfix, '\0');
             // printf("    Slowo z postfixem %s.\n", newWord);
             bytes2md5(newWord, strlen(newWord) , hashGess);
             // printf("W wersji zahaszowanej: %s\n", hashGess);
@@ -87,7 +87,7 @@ void postfixScounting()
 }
 
 // szuka chasel z prefiksami i postfiksami
-void postfixAndPrefixScounting()
+void postfixAndPrefixScounting(char tab[WORDS_NR][WORD_LEN])
 {
     printf("Szukam hasel z prefiksami i postfiksami...\n");
 
@@ -95,12 +95,12 @@ void postfixAndPrefixScounting()
     char newWord[WORD_LEN];
     for(int i = 0; i < WORDS_NR; i++)
     {
-        // printf("%d. Slowo bazowe: %s\n", i, wordsTab[i]);
+        // printf("%d. Slowo bazowe: %s\n", i, tab[i]);
         for(int prefix = 0; prefix < DOUBLE_DIGIT; prefix++)
         {
             for(int postfix = 0; postfix < DOUBLE_DIGIT; postfix++)
             {
-                snprintf(newWord, WORD_LEN, "%d%s%d%c", prefix, wordsTab[i], postfix, '\0');
+                snprintf(newWord, WORD_LEN, "%d%s%d%c", prefix, tab[i], postfix, '\0');
                 // printf("    Slowo z postfixem %s.\n", newWord);
                 bytes2md5(newWord, strlen(newWord) , hashGess);
                 // printf("W wersji zahaszowanej: %s\n", hashGess);

@@ -1,6 +1,7 @@
 // make
 // test1: Output/decrypt.out Users/hasla1.txt Dictionaries/slownik1.txt 
-// test2: Output/decrypt.out Users/hasla2.txt Dictionaries/slownik2.txt 
+// test2: Output/decrypt.out Users/hasla2.txt Dictionaries/slownik2.txt
+// test3: Output/decrypt.out Users/hasla3.txt Dictionaries/slownik3.txt  
 
 #include "incAndDef.h"
 #include "glob.h"
@@ -56,10 +57,11 @@ void readUser(FILE * file)
 /* czyta dane słownik */
 void readWords(FILE * file)
 {
+    printf("Czyta słownik.\n");
     char line[LINE_LEN];
     char * tmp;
     int i = 0;
-    printf("Czytam slownik...\n");
+    // printf("Czytam slownik...\n");
     while(fgets(line, LINE_LEN, file))
     {
         tmp = strtok(line, "\n");
@@ -67,6 +69,7 @@ void readWords(FILE * file)
         // printf("%s\n", wordsTab[i]);
         i++;
     }
+    printf("Wczytano %d slow.\n", i);
 }
 
 int main(int argc, char * argv[])
@@ -100,12 +103,26 @@ int main(int argc, char * argv[])
     fclose(fPass);
     fclose(fWord);
 
-    // basicScounting();
-    // prefixScounting();
-    // postfixScounting();
-    // postfixAndPrefixScounting();
-
     createWORDSTab();
     createWordsTab();
+
+    // dla samych malych liter
+    basicScounting(wordsTab);
+    prefixScounting(wordsTab);
+    postfixScounting(wordsTab);
+    postfixAndPrefixScounting(wordsTab);
+
+    // dla samych wielkich liter
+    basicScounting(WORDSTab);
+    prefixScounting(WORDSTab);
+    postfixScounting(WORDSTab);
+    postfixAndPrefixScounting(WORDSTab);
+
+    // dla wielkiej i reszty malych liter
+    basicScounting(WordsTab);
+    prefixScounting(WordsTab);
+    postfixScounting(WordsTab);
+    postfixAndPrefixScounting(WordsTab);
+
     return EXIT_SUCCESS;
 }
