@@ -1,5 +1,7 @@
 {
     "files.associations": {
-        "createwordstabs.h": "c"
+        "createwordstabs.h": "c",
+        "incanddef.h": "c",
+        "stdbool.h": "c"
     }
 }

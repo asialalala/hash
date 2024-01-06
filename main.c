@@ -21,8 +21,8 @@ void dealloc(int size, char ** tab)
 /* czyta dane uzytkownika */
 void readUser(FILE * file)
 {
-    char line[LINE_LEN];
-    char * tmp;
+        char line[LINE_LEN];
+        char * tmp;
     int i = 0;
     printf("Czytam baze uzytkownikow...\n");
     while(fgets(line, LINE_LEN, file))
@@ -59,6 +59,7 @@ void readUser(FILE * file)
         }else{
             printf("Blad poczas wczytywania nazwy uzytkownika.\n");
         }
+        userTab[i].broken = false;
         i++;
     }
     printf("Wczytano %d zestawow danych.\n", i);
@@ -106,7 +107,7 @@ int readWords(FILE * file)
         // printf("%s\n", wordsTab[i]);
         i++;
     }
-    // printf("Wczytano %d slow.\n", i);
+    printf("Wczytano %d slow.\n", i);
     return wordsTabSize;
 }
 
@@ -143,7 +144,7 @@ int main(int argc, char * argv[])
     }
 
     readUser(fPass);
-
+    
     fclose(fPass);
     fclose(fWord);
 

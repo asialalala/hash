@@ -9,6 +9,7 @@ struct user
     char pass[34];
     char mail[100];
     char name[100];
+    bool broken; // zmienic na true, gdy zostanie zlamane
 };
 
 char **wordsTab;

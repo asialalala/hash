@@ -26,7 +26,7 @@ int createWORDSTab(int size)
     }
 
     // printf("\nTworze nowy slownik z wielkich liter.\n");
-    for (int wordNr = 0; wordNr < WORDS_NR; wordNr++)
+    for (int wordNr = 0; wordNr < size; wordNr++)
     {
         for (int i = 0; i < strlen(wordsTab[wordNr]); i++)
         {
@@ -58,7 +58,7 @@ int createWordsTab(int size)
     }
 
     // printf("Tworze nowy slownik z wielka litera na poczatku i reszta malych.\n");
-    for (int wordNr = 0; wordNr < WORDS_NR; wordNr++)
+    for (int wordNr = 0; wordNr < size; wordNr++)
     {
         strncpy(WordsTab[wordNr], wordsTab[wordNr], strlen(wordsTab[wordNr]));
         WordsTab[wordNr][0] = toupper(WordsTab[wordNr][0]);
