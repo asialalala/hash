@@ -1,9 +1,31 @@
 #include "createWordsTabs.h"
 
+void dealloc(int size, char ** tab); // from main
+
 /* wypelnia WORDSTab  slowami z wielkich liter*/
-void createWORDSTab()
+int createWORDSTab(int size)
 {
-    // printf("Tworze nowy slownik z wielkich liter.\n");
+    // zaalokuj rozmiar slownika
+    WORDSTab = (char**)malloc(size * sizeof(char*));
+    if(!WORDSTab)
+        return MALLOC_ERROR;
+    
+
+    // zaalokuj miejsce na slowa w slowniku
+    for(int i = 0; i < size; i++)
+    {
+        // printf("%d ", i);
+        WORDSTab[i] = (char*)malloc(LINE_LEN * sizeof(char));
+        if(!WORDSTab[i])
+        {
+            printf("\n blad podczas alokacji\n");
+            dealloc(i, WORDSTab);
+            return MALLOC_ERROR;
+        }
+            
+    }
+
+    // printf("\nTworze nowy slownik z wielkich liter.\n");
     for (int wordNr = 0; wordNr < WORDS_NR; wordNr++)
     {
         for (int i = 0; i < strlen(wordsTab[wordNr]); i++)
@@ -12,11 +34,29 @@ void createWORDSTab()
         }
         // printf("Slowo z wielkich liter: %s\n", WORDSTab[wordNr]);
     } 
+    return EXIT_SUCCESS;
 }
 
 /* wypelnia WordsTab slowami z wielko litera na poczatki i samymi malymi*/
-void createWordsTab()
+int createWordsTab(int size)
 {
+    // zaalokuj rozmiar slownika
+    WordsTab = (char**)malloc(size * sizeof(char*));
+    if(!WordsTab)
+        return MALLOC_ERROR;
+    
+
+    // zaalokuj miejsce na slowa w slowniku
+    for(int i = 0; i < size; i++)
+    {
+        WordsTab[i] = (char*)malloc(LINE_LEN * sizeof(char));
+        if(!WordsTab[i])
+        {
+            dealloc(i, WordsTab);
+            return MALLOC_ERROR;
+        }      
+    }
+
     // printf("Tworze nowy slownik z wielka litera na poczatku i reszta malych.\n");
     for (int wordNr = 0; wordNr < WORDS_NR; wordNr++)
     {
@@ -24,5 +64,6 @@ void createWordsTab()
         WordsTab[wordNr][0] = toupper(WordsTab[wordNr][0]);
         // printf("Slowo z wielka litera na poczatku: %s\n", WordsTab[wordNr]);
     }
+    return EXIT_SUCCESS;
 }
 

@@ -27,13 +27,13 @@ void compareHash(char * gess, char * pass)
 }
 
 /* tworzy hasze na podstawie calego slownika i sprawdza czy znajduje sie takie w tablicy hasel*/
-void basicScounting(char tab[WORDS_NR][WORD_LEN])
+void basicScounting(char ** tab, int size)
 {
     printf("Szukam hasel ...\n");
 
     char hashGess[33];
 
-    for(int i = 0; i < WORDS_NR; i++)
+    for(int i = 0; i < size; i++)
     {
         // printf("%d. slowo: %s\n", i, tab[i]);
         bytes2md5(tab[i], strlen(tab[i]) , hashGess);
@@ -43,13 +43,13 @@ void basicScounting(char tab[WORDS_NR][WORD_LEN])
 }
 
 // szuka hasel z prefiksami
-void prefixScounting(char tab[WORDS_NR][WORD_LEN])
+void prefixScounting(char ** tab, int size)
 {
     printf("Szukam hasel z prefiksami...\n");
 
     char hashGess[33];
     char newWord[WORD_LEN];
-    for(int i = 0; i < WORDS_NR; i++)
+    for(int i = 0; i < size; i++)
     {
         // printf("%d. Slowo bazowe: %s\n", i, tab[i]);
         for(int prefix = 0; prefix < DOUBLE_DIGIT; prefix++)
@@ -65,13 +65,13 @@ void prefixScounting(char tab[WORDS_NR][WORD_LEN])
 }
 
 // szuka hasel z postfiksami
-void postfixScounting(char tab[WORDS_NR][WORD_LEN])
+void postfixScounting(char ** tab, int size)
 {
     printf("Szukam hasel z postfiksami...\n");
 
     char hashGess[33];
     char newWord[WORD_LEN];
-    for(int i = 0; i < WORDS_NR; i++)
+    for(int i = 0; i < size; i++)
     {
         // printf("%d. Slowo bazowe: %s\n", i, tab[i]);
         for(int postfix = 0; postfix < DOUBLE_DIGIT; postfix++)
@@ -87,13 +87,13 @@ void postfixScounting(char tab[WORDS_NR][WORD_LEN])
 }
 
 // szuka chasel z prefiksami i postfiksami
-void postfixAndPrefixScounting(char tab[WORDS_NR][WORD_LEN])
+void postfixAndPrefixScounting(char ** tab, int size)
 {
     printf("Szukam hasel z prefiksami i postfiksami...\n");
 
     char hashGess[33];
     char newWord[WORD_LEN];
-    for(int i = 0; i < WORDS_NR; i++)
+    for(int i = 0; i < size; i++)
     {
         // printf("%d. Slowo bazowe: %s\n", i, tab[i]);
         for(int prefix = 0; prefix < DOUBLE_DIGIT; prefix++)

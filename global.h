@@ -11,9 +11,10 @@ struct user
     char name[100];
 };
 
-char wordsTab[WORDS_NR][WORD_LEN];
-char WORDSTab[WORDS_NR][WORD_LEN];
-char WordsTab[WORDS_NR][WORD_LEN];
+char **wordsTab;
+char **WORDSTab;
+char **WordsTab;
 
 struct user userTab[USER_NR];
+
 #endif

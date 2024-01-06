@@ -8,6 +8,16 @@
 #include "scouting.h"
 #include "createWordsTabs.h"
 
+/* dealokuje pamiec w wordTab*/
+void dealloc(int size, char ** tab)
+{
+    for (int i = 0; i < size; i++)
+    {
+        free(tab[i]);
+    } 
+    free(wordsTab);
+}
+
 /* czyta dane uzytkownika */
 void readUser(FILE * file)
 {
@@ -54,22 +64,50 @@ void readUser(FILE * file)
     printf("Wczytano %d zestawow danych.\n", i);
 }
 
+
 /* czyta dane słownik */
-void readWords(FILE * file)
+int readWords(FILE * file)
 {
     printf("Czyta słownik.\n");
+
+    // sprawdz ile jest slow do wczytania
     char line[LINE_LEN];
+    int wordsTabSize = 0;
+    while(fgets(line, LINE_LEN, file))
+        wordsTabSize++;
+
+    // zaalokuj rozmiar slownika
+    wordsTab = (char**)malloc(wordsTabSize * sizeof(char*));
+    if(!wordsTab)
+        return MALLOC_ERROR;
+    
+
+    // zaalokuj miejsce na slowa w slowniku
+    for(int i = 0; i < wordsTabSize; i++)
+    {
+        wordsTab[i] = (char*)malloc(LINE_LEN * sizeof(char));
+        if(!wordsTab[i])
+        {
+            dealloc(i, wordsTab);
+            return MALLOC_ERROR;
+        }  
+    }
+
+    // wczytuj slowa
+    rewind(file); // wroc do poczatku pliku
+    
     char * tmp;
     int i = 0;
-    // printf("Czytam slownik...\n");
     while(fgets(line, LINE_LEN, file))
     {
         tmp = strtok(line, "\n");
+        wordsTab[i] = 
         strcpy(wordsTab[i], tmp); //czytaj ID
         // printf("%s\n", wordsTab[i]);
         i++;
     }
-    printf("Wczytano %d slow.\n", i);
+    // printf("Wczytano %d slow.\n", i);
+    return wordsTabSize;
 }
 
 int main(int argc, char * argv[])
@@ -97,32 +135,47 @@ int main(int argc, char * argv[])
         return EXIT_FAILURE;
     }
 
-    readWords(fWord);
+    int wordsTabSize = readWords(fWord);
+    if(wordsTabSize == MALLOC_ERROR)
+    {
+        printf("Nie udało sie wczytac slownika.\n");
+        return EXIT_FAILURE;
+    }
+
     readUser(fPass);
 
     fclose(fPass);
     fclose(fWord);
 
-    createWORDSTab();
-    createWordsTab();
+    if(createWORDSTab(wordsTabSize) == MALLOC_ERROR)
+    {
+        printf("Nie udało sie utworzyc slownika z wilkich liter.\n");
+        return EXIT_FAILURE;
+    }
+
+    if(createWordsTab(wordsTabSize) == MALLOC_ERROR)
+    {
+        printf("Nie udało sie utworzyc slownika z wielka i malymi literami.\n");
+        return EXIT_FAILURE;
+    }
 
     // dla samych malych liter
-    basicScounting(wordsTab);
-    prefixScounting(wordsTab);
-    postfixScounting(wordsTab);
-    postfixAndPrefixScounting(wordsTab);
+    basicScounting(wordsTab, wordsTabSize);
+    prefixScounting(wordsTab, wordsTabSize);
+    postfixScounting(wordsTab, wordsTabSize);
+    postfixAndPrefixScounting(wordsTab, wordsTabSize);
 
     // dla samych wielkich liter
-    basicScounting(WORDSTab);
-    prefixScounting(WORDSTab);
-    postfixScounting(WORDSTab);
-    postfixAndPrefixScounting(WORDSTab);
+    basicScounting(WORDSTab, wordsTabSize);
+    prefixScounting(WORDSTab, wordsTabSize);
+    postfixScounting(WORDSTab, wordsTabSize);
+    postfixAndPrefixScounting(WORDSTab, wordsTabSize);
 
     // dla wielkiej i reszty malych liter
-    basicScounting(WordsTab);
-    prefixScounting(WordsTab);
-    postfixScounting(WordsTab);
-    postfixAndPrefixScounting(WordsTab);
+    basicScounting(WordsTab, wordsTabSize);
+    prefixScounting(WordsTab, wordsTabSize);
+    postfixScounting(WordsTab, wordsTabSize);
+    postfixAndPrefixScounting(WordsTab, wordsTabSize);
 
     return EXIT_SUCCESS;
 }
