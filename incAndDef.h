@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>             // strcpy, strcmp, strcat
 #include <openssl/evp.h>       // EVP_MD_CTX, EVP_MD_CTX_new...
+#include <ctype.h>             // toupper
 // #include <stdbool.h>           // bool
 
 #define WORDS_NR 14 //1000

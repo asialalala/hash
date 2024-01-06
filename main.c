@@ -1,18 +1,19 @@
 // make
-// test1: Out/decrypt.out Users/hasla1.txt Dictionaries/slownik1.txt 
-// test2: Out/decrypt.out Users/hasla2.txt Dictionaries/slownik2.txt 
+// test1: Output/decrypt.out Users/hasla1.txt Dictionaries/slownik1.txt 
+// test2: Output/decrypt.out Users/hasla2.txt Dictionaries/slownik2.txt 
 
 #include "incAndDef.h"
-#include "scouting.h"
 #include "glob.h"
+#include "scouting.h"
+#include "createWordsTabs.h"
 
-/* czyta dane urzytkownika */
+/* czyta dane uzytkownika */
 void readUser(FILE * file)
 {
     char line[LINE_LEN];
     char * tmp;
     int i = 0;
-    printf("Czytam baze urzytkownikow...\n");
+    printf("Czytam baze uzytkownikow...\n");
     while(fgets(line, LINE_LEN, file))
     {
         tmp = strtok(line, "\t");
@@ -99,10 +100,12 @@ int main(int argc, char * argv[])
     fclose(fPass);
     fclose(fWord);
 
-    basicScounting();
-    prefixScounting();
-    postfixScounting();
-    postfixAndPrefixScounting();
+    // basicScounting();
+    // prefixScounting();
+    // postfixScounting();
+    // postfixAndPrefixScounting();
 
+    createWORDSTab();
+    createWordsTab();
     return EXIT_SUCCESS;
 }

@@ -12,6 +12,8 @@ struct user
 };
 
 char wordsTab[WORDS_NR][WORD_LEN];
-char WORDTab[WORDS_NR][WORD_LEN];
+char WORDSTab[WORDS_NR][WORD_LEN];
+char WordsTab[WORDS_NR][WORD_LEN];
+
 struct user userTab[USER_NR];
 #endif
