@@ -20,9 +20,15 @@ void compareHash(char * gess, char * pass)
 {
     for(int i = 0; i < USER_NR; i++)
     {
-        // printf("    Porownuje %s z %s\n", gess, userTab[i].pass);
-        if(!strcmp(gess, userTab[i].pass ))
-            printf("======= Haslo dla %s: %s =======\n", userTab[i].name, pass);
+        if(userTab[i].broken == false)
+        {
+            // printf("    Porownuje %s z %s\n", gess, userTab[i].pass);
+            if(!strcmp(gess, userTab[i].pass ))
+            {
+                userTab[i].broken = true;
+                printf("======= Haslo dla %s: %s =======\n", userTab[i].name, pass);
+            }
+        }
     }
 }
 
