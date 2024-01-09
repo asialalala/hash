@@ -7,7 +7,7 @@
 #include "glob.h"
 #include "scouting.h"
 #include "createWordsTabs.h"
-#include<unistd.h>
+#include "manage.h"
 
 /* dealokuje pamiec w wordTab*/
 void dealloc(int size, char ** tab)
@@ -20,11 +20,11 @@ void dealloc(int size, char ** tab)
 }
 
 /* czyta dane uzytkownika */
-void readUser(FILE * file)
+int readUser(FILE * file)
 {
         char line[LINE_LEN];
         char * tmp;
-    int i = 0;
+    long i = 0;
     printf("Czytam baze uzytkownikow...\n");
     while(fgets(line, LINE_LEN, file))
     {
@@ -63,7 +63,8 @@ void readUser(FILE * file)
         userTab[i].broken = false;
         i++;
     }
-    printf("Wczytano %d zestawow danych.\n", i);
+    printf("Wczytano %ld zestawow danych.\n", i);
+    return i;
 }
 
 
@@ -74,7 +75,7 @@ int readWords(FILE * file)
 
     // sprawdz ile jest slow do wczytania
     char line[LINE_LEN];
-    int wordsTabSize = 0;
+    long wordsTabSize = 0;
     while(fgets(line, LINE_LEN, file))
         wordsTabSize++;
 
@@ -85,7 +86,7 @@ int readWords(FILE * file)
     
 
     // zaalokuj miejsce na slowa w slowniku
-    for(int i = 0; i < wordsTabSize; i++)
+    for(long i = 0; i < wordsTabSize; i++)
     {
         wordsTab[i] = (char*)malloc(LINE_LEN * sizeof(char));
         if(!wordsTab[i])
@@ -99,7 +100,7 @@ int readWords(FILE * file)
     rewind(file); // wroc do poczatku pliku
     
     char * tmp;
-    int i = 0;
+    long i = 0;
     while(fgets(line, LINE_LEN, file))
     {
         tmp = strtok(line, "\n");
@@ -109,12 +110,13 @@ int readWords(FILE * file)
         // printf("%s\n", wordsTab[i]);
         i++;
     }
-    printf("Wczytano %d slow.\n", i);
+    printf("Wczytano %ld slow.\n", i);
     return wordsTabSize;
 }
 
 int main(int argc, char * argv[])
 {
+    finish = false;  // na poczatku nie ma konca:)  
     if(argc != 3)
     {
         printf("Niewlasciwa liczba argumentow.\n");
@@ -145,7 +147,7 @@ int main(int argc, char * argv[])
         return EXIT_FAILURE;
     }
 
-    readUser(fPass);
+    userTabSize = readUser(fPass);
     
     fclose(fPass);
     fclose(fWord);
@@ -162,10 +164,35 @@ int main(int argc, char * argv[])
         return EXIT_FAILURE;
     }
 
+    // paramery potrzebne do utworzenia watkow
+    pthread_attr_t attr;
+    pthread_attr_init(&attr);
+    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
 
-    scouting(wordsTab, wordsTabSize);
-    scouting(WORDSTab, wordsTabSize);
-    scouting(WordsTab, wordsTabSize);
+    pthread_t prodTab[PROD_NR];
+    pthread_t manager;
+    int rc;
+   
+    long t = 0; //ilsoc watkow
+    found = NOONE;  // zadne chaslo nie zostalo znalezione
+
+    // zainicjalizowanie mtexow                                                                                                                             
+    pthread_mutex_init(&gettingWordMutex, NULL);
+    pthread_cond_init(&findCondvar, NULL);
+    pthread_cond_init(&finishCondvar, NULL);
+
+    // stworz konsmenta                                                                                                                                     
+    rc = pthread_create(&manager, NULL, manage, (void *) ++t);
+    if (rc){
+        printf("ERROR; return code from pthread_create() is %d\n", rc);
+        exit(-1);
+    }
+
+    // poczekaj az watki sie wykonaja                                                                                                                       
+    for (t = 0; t < PROD_NR; t++) {
+        pthread_join(prodTab[t], NULL);
+    }
+    pthread_join(manager, NULL);
 
     dealloc(wordsTabSize, wordsTab);
     dealloc(wordsTabSize, WordsTab);
