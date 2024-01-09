@@ -22,7 +22,7 @@ int createWORDSTab(int size)
             dealloc(i, WORDSTab);
             return MALLOC_ERROR;
         }
-            
+        WORDSTab[i][strlen(wordsTab[i])] = '\0';   
     }
 
     // printf("\nTworze nowy slownik z wielkich liter.\n");
@@ -54,7 +54,8 @@ int createWordsTab(int size)
         {
             dealloc(i, WordsTab);
             return MALLOC_ERROR;
-        }      
+        }   
+        WordsTab[i][strlen(wordsTab[i])] = '\0';    
     }
 
     // printf("Tworze nowy slownik z wielka litera na poczatku i reszta malych.\n");

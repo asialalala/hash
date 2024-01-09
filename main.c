@@ -104,6 +104,7 @@ int readWords(FILE * file)
         tmp = strtok(line, "\n");
         wordsTab[i] = 
         strcpy(wordsTab[i], tmp); //czytaj ID
+        wordsTab[i][strlen(wordsTab[i])] = '\0';
         // printf("%s\n", wordsTab[i]);
         i++;
     }
