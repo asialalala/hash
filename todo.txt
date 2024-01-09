@@ -1,0 +1,4 @@
+1. zmienic warunek stopu. Nie moze byc do konca uzytkownikow. Musi byc do konca przegladania wszytskich slownikow
+2. stworzenie watkow producenta (funkcja juz jest)
+3. dobre zajmowanie mutexow przez producentow
+4. dodanie wypisania wszystkich znalezionych hasel przez producenta
