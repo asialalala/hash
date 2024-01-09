@@ -15,7 +15,7 @@ void dealloc(int size, char ** tab)
     {
         free(tab[i]);
     } 
-    free(wordsTab);
+    free(tab);
 }
 
 /* czyta dane uzytkownika */
@@ -179,5 +179,8 @@ int main(int argc, char * argv[])
     postfixScounting(WordsTab, wordsTabSize);
     postfixAndPrefixScounting(WordsTab, wordsTabSize);
 
+    dealloc(wordsTabSize, wordsTab);
+    dealloc(wordsTabSize, WordsTab);
+    dealloc(wordsTabSize, WORDSTab);
     return EXIT_SUCCESS;
 }
