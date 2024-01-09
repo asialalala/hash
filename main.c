@@ -7,6 +7,7 @@
 #include "glob.h"
 #include "scouting.h"
 #include "createWordsTabs.h"
+#include<unistd.h>
 
 /* dealokuje pamiec w wordTab*/
 void dealloc(int size, char ** tab)
@@ -161,10 +162,10 @@ int main(int argc, char * argv[])
         return EXIT_FAILURE;
     }
 
-    basicScounting(wordsTab, 0);
-    prefixScounting(WORDSTab, 0);
-    postfixScounting(WORDSTab, 0);
-    postfixAndPrefixScounting(WORDSTab, 0);
+
+    scouting(wordsTab, wordsTabSize);
+    scouting(WORDSTab, wordsTabSize);
+    scouting(WordsTab, wordsTabSize);
 
     dealloc(wordsTabSize, wordsTab);
     dealloc(wordsTabSize, WordsTab);

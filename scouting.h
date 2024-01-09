@@ -10,4 +10,5 @@ void basicScounting(char ** tab, int wordID);
 void prefixScounting(char ** tab, int wordID);
 void postfixScounting(char ** tab, int wordID);
 void postfixAndPrefixScounting(char ** tab, int wordID);
+void scouting(char ** tab, int size);
 #endif
