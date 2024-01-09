@@ -161,23 +161,10 @@ int main(int argc, char * argv[])
         return EXIT_FAILURE;
     }
 
-    // dla samych malych liter
-    basicScounting(wordsTab, wordsTabSize);
-    prefixScounting(wordsTab, wordsTabSize);
-    postfixScounting(wordsTab, wordsTabSize);
-    postfixAndPrefixScounting(wordsTab, wordsTabSize);
-
-    // dla samych wielkich liter
-    basicScounting(WORDSTab, wordsTabSize);
-    prefixScounting(WORDSTab, wordsTabSize);
-    postfixScounting(WORDSTab, wordsTabSize);
-    postfixAndPrefixScounting(WORDSTab, wordsTabSize);
-
-    // dla wielkiej i reszty malych liter
-    basicScounting(WordsTab, wordsTabSize);
-    prefixScounting(WordsTab, wordsTabSize);
-    postfixScounting(WordsTab, wordsTabSize);
-    postfixAndPrefixScounting(WordsTab, wordsTabSize);
+    basicScounting(wordsTab, 0);
+    prefixScounting(WORDSTab, 0);
+    postfixScounting(WORDSTab, 0);
+    postfixAndPrefixScounting(WORDSTab, 0);
 
     dealloc(wordsTabSize, wordsTab);
     dealloc(wordsTabSize, WordsTab);
