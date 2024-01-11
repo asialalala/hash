@@ -25,7 +25,7 @@ long compareHash(char * gess, char * pass)
             // printf("    Porownuje %s z %s\n", gess, userTab[i].pass);
             if(!strcmp(gess, userTab[i].pass ))
             {
-                printf("=========== znaleziono %s ===========\n", gess);
+                // printf("=========== znaleziono %s ===========\n", gess);
                return i; // odnaleziono
             }
         }
@@ -36,7 +36,7 @@ long compareHash(char * gess, char * pass)
 /* tworzy hasze na podstawie podanego slowa i sprawdza czy znajduje sie takie w tablicy hasel*/
 void basicScounting(char ** tab, int wordID)
 {
-    printf("Szukam hasel podstawowych...\n");
+    // printf("Szukam hasel podstawowych...\n");
 
     char hashGess[33];
     pthread_mutex_lock(&gettingWordMutex); // zapezpiecz odczyt z tablicy
@@ -50,6 +50,7 @@ void basicScounting(char ** tab, int wordID)
     {
         found = passID;             // zapisz numer hasla w bazie uzytkownikow
         foundPass = tab[wordID];    // zapisz znalezione haslo w postaci niehaszowej
+        pthread_cond_signal(&foundPassCond);
     }
 
     
@@ -139,6 +140,7 @@ void postfixAndPrefixScounting(char ** tab, int wordID)
             {
                 found = passID;             // zapisz numer hasla w bazie uzytkownikow
                 foundPass = tab[wordID];    // zapisz znalezione haslo w postaci niehaszowej
+                pthread_cond_broadcast(&setCheckingWordIDCond);
             }
 
             pthread_mutex_unlock(&gettingWordMutex); // zapezpiecz odczyt z tablicy
@@ -161,7 +163,7 @@ void* scouting(void *arg)
     while(checkingWordID == NOONE )
         {
           printf("  Producent czeka na wykonywanie swojego zadania\n");
-          pthread_cond_wait(&setCheckingWordID, &gettingWordMutex); // czeka i pozwala odszyfrowywac                                                              
+          pthread_cond_wait(&setCheckingWordIDCond, &gettingWordMutex); // czeka i pozwala odszyfrowywac                                                              
 	    } 
     pthread_mutex_unlock(&gettingWordMutex);
 
@@ -170,9 +172,10 @@ void* scouting(void *arg)
     {
         pthread_mutex_lock(&gettingWordMutex); // zapezpiecz odczyt id slowa
         id = checkingWordID;
+        // printf("Odczytano id: %ld w producencie %ld\n", id, prodNr );
         pthread_mutex_unlock(&gettingWordMutex); // zwolnic zabezpieczenie
-        last_id = id;
         
+
         if(last_id != id) // jesli konsument nie zdazul zadac nowego zadania nie wykonuj
         {
             basicScounting(dictionary, id);
@@ -180,7 +183,7 @@ void* scouting(void *arg)
             // postfixScounting(param->Tab, i);
             // postfixAndPrefixScounting(param->Tab, i);
         }
-        
+        last_id = id;
     }
     
     // finish = true;

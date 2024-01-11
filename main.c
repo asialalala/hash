@@ -175,8 +175,8 @@ int main(int argc, char * argv[])
     
     // zainicjalizowanie mtexow                                                                                                                             
     pthread_mutex_init(&gettingWordMutex, NULL);
-    pthread_cond_init(&endScouting, NULL);
-    pthread_cond_init(&setCheckingWordID, NULL);
+    pthread_cond_init(&foundPassCond, NULL);
+    pthread_cond_init(&setCheckingWordIDCond, NULL);
 
     // stworz peoducentow
     for(long i = 0; i < PROD_NR; i++)

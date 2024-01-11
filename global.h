@@ -20,9 +20,9 @@ long dictionarySize;
 
 pthread_mutex_t gettingWordMutex;          // ochrona przed pobieraniem slowa
 // pthread_mutex_t gettingUserMutex;          // ochrona przed pobieraniem danych uzytkownika                                                 
-pthread_cond_t endScouting;                // zakonczenie przeszukiwania przez jeden ze sposobow
-// pthread_cond_t finishCondvar;              // odnalezienie wszystkich hasel      
-pthread_cond_t setCheckingWordID;           // podanie id slowa do sprawdzania
+// pthread_cond_t endScouting;                // zakonczenie przeszukiwania przez jeden ze sposobow
+pthread_cond_t foundPassCond;              // odnalezienie wszystkich hasel      
+pthread_cond_t setCheckingWordIDCond;           // podanie id slowa do sprawdzania
 
 bool finish;                                // gdy wszyscy producenci skocza true
 long found;                                 // Id znalezionego hasla

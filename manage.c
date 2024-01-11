@@ -13,18 +13,18 @@ void* manage(void *arg)
         pthread_mutex_lock(&gettingWordMutex); // zarzadca zajmuje mutex aby sprawdzic, czy ktos juz znalazl haslo                                                         
         checkingWordID = i;
         if(checkingWordID == 0)
-            pthread_cond_broadcast(&setCheckingWordID);
-        while( flag < FLAG)
+            pthread_cond_broadcast(&setCheckingWordIDCond);
+        while( found == NOONE && flag < FLAG) // jakos trzeba zrobic zeby dalej kontynuowal przeszukwianie tego slowa mimo znalezienia
         {
           printf("  Konsument czeka az watki zakacza przeszukiwanie tego slowa\n");
-          pthread_cond_wait(&endScouting, &gettingWordMutex); // czeka i pozwala odszyfrowywac                                                              
+          pthread_cond_wait(&foundPassCond, &gettingWordMutex); // czeka i pozwala odszyfrowywac                                                              
 	    } // gdy dostanie informacje, ze ktorys cos rozszyfrowano  zaznacza jako odszyfrowane i wyswietlakomunikat
 
-        // if(found != NOONE)
-        // {
-        //     userTab[found].broken = true;
-        //     printf("======= Haslo dla %s: %s =======\n", userTab[found].name, foundPass);
-        // }
+        if(found != NOONE)
+        {
+            userTab[found].broken = true;
+            printf("======= Haslo dla %s: %s =======\n", userTab[found].name, foundPass);
+        }
         pthread_mutex_unlock(&gettingWordMutex);
     }
 
