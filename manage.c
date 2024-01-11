@@ -7,11 +7,12 @@ void* manage(void *arg)
     printf("Konsument - watek zarzadzajacy pozostalymi DZIALA!\n");
     int _dictionarySize = dictionarySize;
 
-    for(int i = 0; i < _dictionarySize; i++)
+    for(int i = 0; i <= _dictionarySize; i++)
     {
-        printf("Konsument zmienia wartosc checkingWordID\n");
+        
         pthread_mutex_lock(&gettingWordMutex); // zarzadca zajmuje mutex aby sprawdzic, czy ktos juz znalazl haslo                                                         
         checkingWordID = i;
+        printf("Konsument zmienia wartosc checkingWordID na %ld\n", checkingWordID);
         if(checkingWordID == 0)
             pthread_cond_broadcast(&setCheckingWordIDCond);
         while( found == NOONE && flag < FLAG) // jakos trzeba zrobic zeby dalej kontynuowal przeszukwianie tego slowa mimo znalezienia

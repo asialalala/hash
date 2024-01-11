@@ -172,11 +172,11 @@ void* scouting(void *arg)
     {
         pthread_mutex_lock(&gettingWordMutex); // zapezpiecz odczyt id slowa
         id = checkingWordID;
-        // printf("Odczytano id: %ld w producencie %ld\n", id, prodNr );
+        printf("Odczytano id: %ld w producencie %ld\n", id, prodNr );
         pthread_mutex_unlock(&gettingWordMutex); // zwolnic zabezpieczenie
         
 
-        if(last_id != id) // jesli konsument nie zdazul zadac nowego zadania nie wykonuj
+        if(last_id != id && id < dictionarySize) // jesli konsument nie zdazul zadac nowego zadania nie wykonuj
         {
             basicScounting(dictionary, id);
             // prefixScounting(param->Tab, i);
