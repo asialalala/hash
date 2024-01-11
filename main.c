@@ -188,7 +188,21 @@ int main(int argc, char * argv[])
         exit(-1);
     }
 
-    scouting(wordsTab, wordsTabSize);
+    // zainicjalizuj parametry producentow
+    producerParam->Tab = wordsTab;
+    ProducerParam->Tab = WordsTab;
+    PRODUCERParam->Tab = WORDSTab;
+    producerParam->UserTabSize = ProducerParam->UserTabSize = PRODUCERParam->UserTabSize = wordsTabSize; // jak nie bedzie dzialac to moze ta inicjalizacja jest xle
+
+    // stworz peoducentow
+    for(int i = 0; i < PROD_NR; i++)
+    {
+        rc = pthread_create(&prodTab[i], NULL, scouting, (void *)producerParam);
+        if (rc){
+            printf("ERROR; return code from pthread_create() is %d\n", rc);
+            exit(-1);
+        }
+    }
 
     // poczekaj az watki sie wykonaja                                                                                                                       
     for (t = 0; t < PROD_NR; t++) {

@@ -2,3 +2,6 @@
 2. stworzenie watkow producenta (funkcja juz jest)
 3. dobre zajmowanie mutexow przez producentow
 4. dodanie wypisania wszystkich znalezionych hasel przez producenta
+5. zcy tutaj równiez trzeba kolejkowac odgadniete chasla przesylane do konsumenta? chyba tak
+    - found i pass do struktury
+    - kolekowac je i usuwac (dynamicznie??)

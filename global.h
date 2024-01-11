@@ -11,13 +11,25 @@ struct user
     char name[100];
     bool broken;                    // zmienic na true, gdy zostanie zlamane
 };
+struct user userTab[USER_NR];
+long userTabSize;
 
 char **wordsTab;
 char **WORDSTab;
 char **WordsTab;
+struct producerParameters{  //parametry przekazywane watkowi roducenta
 
-long userTabSize;
-struct user userTab[USER_NR];
+char **Tab;
+long UserTabSize;
+int ProdNr;
+};
+
+struct producerParameters* producerParam;
+struct producerParameters* ProducerParam;
+struct producerParameters* PRODUCERParam;
+
+
+
 
 pthread_mutex_t gettingWordMutex;          // ochrona przed pobieraniem slowa
 // pthread_mutex_t gettingUserMutex;          // ochrona przed pobieraniem danych uzytkownika                                                 

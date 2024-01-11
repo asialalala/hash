@@ -16,20 +16,20 @@ void bytes2md5(const char *data, int len, char *md5buf) {
 }
 
 /* sprawdza czy haslo gess znajduje sie w tablicy hasel userTab*/
-void compareHash(char * gess, char * pass)
+long compareHash(char * gess, char * pass)
 {
-    for(int i = 0; i < USER_NR; i++)
+    for(long i = 0; i < USER_NR; i++)
     {
         if(userTab[i].broken == false)
         {
             // printf("    Porownuje %s z %s\n", gess, userTab[i].pass);
             if(!strcmp(gess, userTab[i].pass ))
             {
-                userTab[i].broken = true;
-                printf("======= Haslo dla %s: %s =======\n", userTab[i].name, pass);
+               return i; // odnaleziono
             }
         }
     }
+    return NOONE; // nie znaleziono
 }
 
 /* tworzy hasze na podstawie podanego slowa i sprawdza czy znajduje sie takie w tablicy hasel*/
@@ -38,11 +38,21 @@ void basicScounting(char ** tab, int wordID)
     // printf("Szukam hasel ...\n");
 
     char hashGess[33];
-
+    pthread_mutex_lock(&gettingWordMutex); // zapezpiecz odczyt z tablicy
+    
     // printf("%d. slowo: %s\n", wordID, tab[wordID]);
     bytes2md5(tab[wordID], strlen(tab[wordID]) , hashGess);
     // printf("W wersji zahaszowanej: %s\n", hashGess);
-    compareHash(hashGess, tab[wordID]);
+
+    long passID = compareHash(hashGess, tab[wordID]);
+    if( passID != NOONE)
+    {
+        found = passID;             // zapisz numer hasla w bazie uzytkownikow
+        foundPass = tab[wordID];    // zapisz znalezione haslo w postaci niehaszowej
+    }
+
+    
+    pthread_mutex_unlock(&gettingWordMutex); // odbezpiecz odczyt z tablicy
 }
 
 // szuka hasel z prefiksami
@@ -58,9 +68,19 @@ void prefixScounting(char ** tab, int wordID)
     {
         snprintf(newWord, WORD_LEN, "%d%s", prefix, tab[wordID]);
         // printf("    Slowo z prefixem %s.\n", newWord);
+        
+        pthread_mutex_lock(&gettingWordMutex); // zapezpiecz odczyt z tablicy
+
         bytes2md5(newWord, strlen(newWord) , hashGess);
         // printf("W wersji zahaszowanej: %s\n", hashGess);
-        compareHash(hashGess, newWord);
+        long passID = compareHash(hashGess, tab[wordID]);
+        if( passID != NOONE)
+        {
+            found = passID;             // zapisz numer hasla w bazie uzytkownikow
+            foundPass = tab[wordID];    // zapisz znalezione haslo w postaci niehaszowej
+        }
+
+        pthread_mutex_unlock(&gettingWordMutex); // odbezpiecz odczyt z tablicy
     }
 }
 
@@ -77,13 +97,23 @@ void postfixScounting(char ** tab, int wordID)
     {
         snprintf(newWord, WORD_LEN, "%s%d%c", tab[wordID], postfix, '\0');
         // printf("    Slowo z postfixem %s.\n", newWord);
+        
+        pthread_mutex_lock(&gettingWordMutex); // zapezpiecz odczyt z tablicy
+        
         bytes2md5(newWord, strlen(newWord) , hashGess);
         // printf("W wersji zahaszowanej: %s\n", hashGess);
-        compareHash(hashGess, newWord);
+        long passID = compareHash(hashGess, tab[wordID]);
+        if( passID != NOONE)
+        {
+            found = passID;             // zapisz numer hasla w bazie uzytkownikow
+            foundPass = tab[wordID];    // zapisz znalezione haslo w postaci niehaszowej
+        }
+
+        pthread_mutex_unlock(&gettingWordMutex); // odbezpiecz odczyt z tablicy
     }
 }
 
-// szuka chasel z prefiksami i postfiksami
+// szuka hasel z prefiksami i postfiksami
 void postfixAndPrefixScounting(char ** tab, int wordID)
 {
     // printf("Szukam hasel z prefiksami i postfiksami...\n");
@@ -98,9 +128,19 @@ void postfixAndPrefixScounting(char ** tab, int wordID)
         {
             snprintf(newWord, WORD_LEN, "%d%s%d%c", prefix, tab[wordID], postfix, '\0');
             // printf("    Slowo z postfixem i prefixem %s.\n", newWord);
+            
+            pthread_mutex_lock(&gettingWordMutex); // zapezpiecz odczyt z tablicy
+
             bytes2md5(newWord, strlen(newWord) , hashGess);
             // printf("W wersji zahaszowanej: %s\n", hashGess);
-            compareHash(hashGess, newWord);
+            long passID = compareHash(hashGess, tab[wordID]);
+            if( passID != NOONE)
+            {
+                found = passID;             // zapisz numer hasla w bazie uzytkownikow
+                foundPass = tab[wordID];    // zapisz znalezione haslo w postaci niehaszowej
+            }
+
+            pthread_mutex_unlock(&gettingWordMutex); // zapezpiecz odczyt z tablicy
         }
 
     }
@@ -108,14 +148,19 @@ void postfixAndPrefixScounting(char ** tab, int wordID)
 }
 
 /* przeszukuje cala tablice slow i poszukuje hasla*/
-void scouting(char ** tab, int size)
+void* scouting(void *arg)
 {
-    // printf("Przeszukuję słownik.\n");
-    for(int i = 0; i < size; i++)
+    struct producerParameters* param = (struct producerParameters*)arg;
+
+     printf("Przeszukuję słownik, producent %d.\n", param->ProdNr);
+    for(long i = 0; i < param->UserTabSize; i++)
     {
-        basicScounting(tab, i);
-        prefixScounting(tab, i);
-        postfixScounting(tab, i);
-        postfixAndPrefixScounting(tab, i);
+        basicScounting(param->Tab, i);
+        prefixScounting(param->Tab, i);
+        postfixScounting(param->Tab, i);
+        postfixAndPrefixScounting(param->Tab, i);
     }
+    finish = true;
+
+    pthread_exit(NULL);
 }
