@@ -5,20 +5,26 @@
 void* manage(void *arg)
 {
     printf("Konsument - watek zarzadzajacy pozostalymi DZIALA!\n");
-    
-    while(finish == false)
-    {
-        pthread_mutex_lock(&gettingWordMutex); // zarzadca zajmuje mutex aby sprawdzic, czy ktos juz znalazl haslo                                                         
+    int _dictionarySize = dictionarySize;
 
-        while( found == NOONE)
+    for(int i = 0; i < _dictionarySize; i++)
+    {
+        printf("Konsument zmienia wartosc checkingWordID\n");
+        pthread_mutex_lock(&gettingWordMutex); // zarzadca zajmuje mutex aby sprawdzic, czy ktos juz znalazl haslo                                                         
+        checkingWordID = i;
+        if(checkingWordID == 0)
+            pthread_cond_broadcast(&setCheckingWordID);
+        while( flag < FLAG)
         {
-          printf("  Konsument czeka az ktorys z synow zakonczy losowanie\n");
-          pthread_cond_wait(&findCondvar, &gettingWordMutex); // czeka i pozwala odszyfrowywac                                                              
+          printf("  Konsument czeka az watki zakacza przeszukiwanie tego slowa\n");
+          pthread_cond_wait(&endScouting, &gettingWordMutex); // czeka i pozwala odszyfrowywac                                                              
 	    } // gdy dostanie informacje, ze ktorys cos rozszyfrowano  zaznacza jako odszyfrowane i wyswietlakomunikat
 
-        userTab[found].broken = true;
-        printf("======= Haslo dla %s: %s =======\n", userTab[found].name, foundPass);
-        // KAZ WSZYSTKIM ZAKONCZYC PRACE!!
+        // if(found != NOONE)
+        // {
+        //     userTab[found].broken = true;
+        //     printf("======= Haslo dla %s: %s =======\n", userTab[found].name, foundPass);
+        // }
         pthread_mutex_unlock(&gettingWordMutex);
     }
 

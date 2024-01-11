@@ -36,7 +36,7 @@ long compareHash(char * gess, char * pass)
 /* tworzy hasze na podstawie podanego slowa i sprawdza czy znajduje sie takie w tablicy hasel*/
 void basicScounting(char ** tab, int wordID)
 {
-    printf("Szukam hasel ...\n");
+    printf("Szukam hasel podstawowych...\n");
 
     char hashGess[33];
     pthread_mutex_lock(&gettingWordMutex); // zapezpiecz odczyt z tablicy
@@ -152,15 +152,38 @@ void postfixAndPrefixScounting(char ** tab, int wordID)
 void* scouting(void *arg)
 {
     long prodNr = (long)arg;
-     printf("Przeszukuję słownik, producent %ld.\n", prodNr);
-    for(long i = 0; i < UserTabSize; i++)
+    printf("Przeszukuję słownik, producent %ld.\n", prodNr);
+    
+    long id = NOONE;
+    long last_id = NOONE;
+
+    pthread_mutex_lock(&gettingWordMutex);
+    while(checkingWordID == NOONE )
+        {
+          printf("  Producent czeka na wykonywanie swojego zadania\n");
+          pthread_cond_wait(&setCheckingWordID, &gettingWordMutex); // czeka i pozwala odszyfrowywac                                                              
+	    } 
+    pthread_mutex_unlock(&gettingWordMutex);
+
+    printf("%ld. Doczekane\n",prodNr);
+    while(id < dictionarySize)
     {
-        basicScounting(dictionary, i);
-        // prefixScounting(param->Tab, i);
-        // postfixScounting(param->Tab, i);
-        // postfixAndPrefixScounting(param->Tab, i);
+        pthread_mutex_lock(&gettingWordMutex); // zapezpiecz odczyt id slowa
+        id = checkingWordID;
+        pthread_mutex_unlock(&gettingWordMutex); // zwolnic zabezpieczenie
+        last_id = id;
+        
+        if(last_id != id) // jesli konsument nie zdazul zadac nowego zadania nie wykonuj
+        {
+            basicScounting(dictionary, id);
+            // prefixScounting(param->Tab, i);
+            // postfixScounting(param->Tab, i);
+            // postfixAndPrefixScounting(param->Tab, i);
+        }
+        
     }
-    finish = true;
+    
+    // finish = true;
 
     pthread_exit(NULL);
 }

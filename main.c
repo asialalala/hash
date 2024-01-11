@@ -153,8 +153,8 @@ int main(int argc, char * argv[])
     fclose(fPass);
     fclose(fWord);
 
-    int dictionertSize = createDictionary(wordsBaseTabSize * 3, wordsBaseTabSize);
-    if(dictionertSize == MALLOC_ERROR)
+    dictionarySize = createDictionary(wordsBaseTabSize * 3, wordsBaseTabSize);
+    if(dictionarySize == MALLOC_ERROR)
     {
         printf("Nie udało sie utworzyc slownika.\n");
         return EXIT_FAILURE;
@@ -171,11 +171,12 @@ int main(int argc, char * argv[])
    
     long t = 0; //ilsoc watkow
     found = NOONE;  // zadne chaslo nie zostalo znalezione
-
+    checkingWordID = NOONE;
+    
     // zainicjalizowanie mtexow                                                                                                                             
     pthread_mutex_init(&gettingWordMutex, NULL);
-    pthread_cond_init(&findCondvar, NULL);
-    pthread_cond_init(&finishCondvar, NULL);
+    pthread_cond_init(&endScouting, NULL);
+    pthread_cond_init(&setCheckingWordID, NULL);
 
     // stworz peoducentow
     for(long i = 0; i < PROD_NR; i++)
