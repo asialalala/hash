@@ -3,68 +3,69 @@
 void dealloc(int size, char ** tab); // from main
 
 /* wypelnia WORDSTab  slowami z wielkich liter*/
-int createWORDSTab(int size)
+void createWORDSTab(int since, int to, int baseSize)
 {
-    // zaalokuj rozmiar slownika
-    WORDSTab = (char**)malloc(size * sizeof(char*));
-    if(!WORDSTab)
-        return MALLOC_ERROR;
-    
 
-    // zaalokuj miejsce na slowa w slowniku
-    for(int i = 0; i < size; i++)
+    printf("\nTworze nowa czesc slownika z wielkich liter.\n");
+     printf("od: %d do: %d\n", since, to);
+    for (int wordNr = since; wordNr < to; wordNr++)
     {
-        // printf("%d ", i);
-        WORDSTab[i] = (char*)malloc(LINE_LEN * sizeof(char));
-        if(!WORDSTab[i])
+        for (int i = 0; i < strlen(wordsTab[wordNr%baseSize]); i++)
         {
-            printf("\n blad podczas alokacji\n");
-            dealloc(i, WORDSTab);
-            return MALLOC_ERROR;
+            printf("%c",dictionary[wordNr][i]);
+            dictionary[wordNr][i] = toupper(wordsTab[wordNr%baseSize][i]);
         }
-        WORDSTab[i][strlen(wordsTab[i])] = '\0';   
-    }
-
-    // printf("\nTworze nowy slownik z wielkich liter.\n");
-    for (int wordNr = 0; wordNr < size; wordNr++)
-    {
-        for (int i = 0; i < strlen(wordsTab[wordNr]); i++)
-        {
-             WORDSTab[wordNr][i] = toupper(wordsTab[wordNr][i]);
-        }
-        // printf("Slowo z wielkich liter: %s\n", WORDSTab[wordNr]);
+        printf("%d. Slowo z wielkich liter: %s\n",wordNr, dictionary[wordNr]);
     } 
-    return EXIT_SUCCESS;
 }
 
 /* wypelnia WordsTab slowami z wielko litera na poczatki i samymi malymi*/
-int createWordsTab(int size)
+void createWordsTab(int since, int to, int baseSize)
 {
+    printf("Tworze nowa czesc slownika z wielka litera na poczatku i reszta malych.\n");
+    printf("od: %d do: %d\n", since, to);
+    for (int wordNr = since; wordNr < to; wordNr++)
+    {
+        strncpy(dictionary[wordNr], wordsTab[wordNr%baseSize], strlen(wordsTab[wordNr%baseSize]));
+        dictionary[wordNr][0] = toupper(wordsTab[wordNr%baseSize][0]);
+        printf("%d. Slowo z wielka litera na poczatku: %s\n",wordNr, dictionary[wordNr]);
+    }
+}
+
+int createDictionary(int wordsTabSize, int baseSize)
+{
+    printf("Tworze slownik.\n");
+
     // zaalokuj rozmiar slownika
-    WordsTab = (char**)malloc(size * sizeof(char*));
-    if(!WordsTab)
+    printf("Alokuje wskaznik na wskaznik na chary.\n");
+    dictionary = (char**)malloc(wordsTabSize * sizeof(char*));
+    if(!dictionary)
         return MALLOC_ERROR;
     
 
     // zaalokuj miejsce na slowa w slowniku
-    for(int i = 0; i < size; i++)
+    for(long i = 0; i < wordsTabSize; i++)
     {
-        WordsTab[i] = (char*)malloc(LINE_LEN * sizeof(char));
-        if(!WordsTab[i])
+        printf("Alokuje wskaniki na chary %ld.\n", i);
+        dictionary[i] = (char*)malloc((i % (wordsTabSize/3)) * sizeof(char));
+        if(!dictionary[i])
         {
-            dealloc(i, WordsTab);
+            printf("dealokuje");
+            dealloc(i, dictionary);
             return MALLOC_ERROR;
-        }   
-        WordsTab[i][strlen(wordsTab[i])] = '\0';    
+        }  
     }
 
-    // printf("Tworze nowy slownik z wielka litera na poczatku i reszta malych.\n");
-    for (int wordNr = 0; wordNr < size; wordNr++)
+    // inicjalizuje elementy w slowniku
+
+    for(int wordNr = 0; wordNr < wordsTabSize/3; wordNr++ )
     {
-        strncpy(WordsTab[wordNr], wordsTab[wordNr], strlen(wordsTab[wordNr]));
-        WordsTab[wordNr][0] = toupper(WordsTab[wordNr][0]);
-        // printf("Slowo z wielka litera na poczatku: %s\n", WordsTab[wordNr]);
+        dictionary[wordNr] = wordsTab[wordNr];
+        printf("%d, %s\n",wordNr, dictionary[wordNr] );
     }
-    return EXIT_SUCCESS;
+    createWordsTab(baseSize, 2*baseSize, baseSize);
+    createWORDSTab(2*baseSize, 3*baseSize, baseSize);
+
+    return wordsTabSize;
 }
 

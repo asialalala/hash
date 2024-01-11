@@ -15,11 +15,10 @@ struct user userTab[USER_NR];
 long userTabSize;
 
 char **wordsTab;
-char **WORDSTab;
-char **WordsTab;
+char **dictionary;
 struct producerParameters{  //parametry przekazywane watkowi roducenta
 
-char **Tab;
+char ***Tab;
 long UserTabSize;
 int ProdNr;
 };

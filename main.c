@@ -14,6 +14,7 @@ void dealloc(int size, char ** tab)
 {
     for (int i = 0; i < size; i++)
     {
+        printf("%d\n", i);
         free(tab[i]);
     } 
     free(tab);
@@ -140,78 +141,74 @@ int main(int argc, char * argv[])
         return EXIT_FAILURE;
     }
 
-    int wordsTabSize = readWords(fWord);
-    if(wordsTabSize == MALLOC_ERROR)
+    int wordsBaseTabSize = readWords(fWord);
+    if(wordsBaseTabSize == MALLOC_ERROR)
     {
         printf("Nie udało sie wczytac slownika.\n");
         return EXIT_FAILURE;
     }
-
+    
     userTabSize = readUser(fPass);
     
     fclose(fPass);
     fclose(fWord);
 
-    if(createWORDSTab(wordsTabSize) == MALLOC_ERROR)
+    int dictionertSize = createDictionary(wordsBaseTabSize * 3, wordsBaseTabSize);
+    if(dictionertSize == MALLOC_ERROR)
     {
-        printf("Nie udało sie utworzyc slownika z wilkich liter.\n");
+        printf("Nie udało sie utworzyc slownika.\n");
         return EXIT_FAILURE;
     }
-
-    if(createWordsTab(wordsTabSize) == MALLOC_ERROR)
-    {
-        printf("Nie udało sie utworzyc slownika z wielka i malymi literami.\n");
-        return EXIT_FAILURE;
-    }
-
-    // paramery potrzebne do utworzenia watkow
-    pthread_attr_t attr;
-    pthread_attr_init(&attr);
-    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
-
-    pthread_t prodTab[PROD_NR];
-    pthread_t manager;
-    int rc;
    
-    long t = 0; //ilsoc watkow
-    found = NOONE;  // zadne chaslo nie zostalo znalezione
 
-    // zainicjalizowanie mtexow                                                                                                                             
-    pthread_mutex_init(&gettingWordMutex, NULL);
-    pthread_cond_init(&findCondvar, NULL);
-    pthread_cond_init(&finishCondvar, NULL);
 
-    // stworz konsmenta                                                                                                                                     
-    rc = pthread_create(&manager, NULL, manage, (void *) ++t);
-    if (rc){
-        printf("ERROR; return code from pthread_create() is %d\n", rc);
-        exit(-1);
-    }
 
-    // zainicjalizuj parametry producentow
-    producerParam->Tab = wordsTab;
-    ProducerParam->Tab = WordsTab;
-    PRODUCERParam->Tab = WORDSTab;
-    producerParam->UserTabSize = ProducerParam->UserTabSize = PRODUCERParam->UserTabSize = wordsTabSize; // jak nie bedzie dzialac to moze ta inicjalizacja jest xle
+    // // paramery potrzebne do utworzenia watkow
+    // pthread_attr_t attr;
+    // pthread_attr_init(&attr);
+    // pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
 
-    // stworz peoducentow
-    for(int i = 0; i < PROD_NR; i++)
-    {
-        rc = pthread_create(&prodTab[i], NULL, scouting, (void *)producerParam);
-        if (rc){
-            printf("ERROR; return code from pthread_create() is %d\n", rc);
-            exit(-1);
-        }
-    }
+    // pthread_t prodTab[PROD_NR];
+    // pthread_t manager;
+    // int rc;
+   
+    // long t = 0; //ilsoc watkow
+    // found = NOONE;  // zadne chaslo nie zostalo znalezione
 
-    // poczekaj az watki sie wykonaja                                                                                                                       
-    for (t = 0; t < PROD_NR; t++) {
-        pthread_join(prodTab[t], NULL);
-    }
-    pthread_join(manager, NULL);
+    // // zainicjalizowanie mtexow                                                                                                                             
+    // pthread_mutex_init(&gettingWordMutex, NULL);
+    // pthread_cond_init(&findCondvar, NULL);
+    // pthread_cond_init(&finishCondvar, NULL);
 
-    dealloc(wordsTabSize, wordsTab);
-    dealloc(wordsTabSize, WordsTab);
-    dealloc(wordsTabSize, WORDSTab);
+
+
+    // printf("Tworze producentow\n");
+    // // stworz peoducentow
+    // for(int i = 0; i < PROD_NR; i++)
+    // {
+    //     printf("tworze %d - tego producenta\n", i);
+    //     rc = pthread_create(&prodTab[i], NULL, scouting, (void *)producerParam);
+    //     if (rc){
+    //         printf("ERROR; return code from pthread_create() is %d\n", rc);
+    //         exit(-1);
+    //     }
+    // }
+
+    // // stworz konsmenta                                                                                                                                     
+    // rc = pthread_create(&manager, NULL, manage, (void *) ++t);
+    // if (rc){
+    //     printf("ERROR; return code from pthread_create() is %d\n", rc);
+    //     exit(-1);
+    // }
+
+
+    // // poczekaj az watki sie wykonaja                                                                                                                       
+    // for (t = 0; t < PROD_NR; t++) {
+    //     pthread_join(prodTab[t], NULL);
+    // }
+    // pthread_join(manager, NULL);
+
+    dealloc(wordsBaseTabSize, wordsTab);
+    // dealloc(wordsBaseTabSize*3, dictionary);
     return EXIT_SUCCESS;
 }

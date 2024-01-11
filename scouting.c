@@ -35,14 +35,14 @@ long compareHash(char * gess, char * pass)
 /* tworzy hasze na podstawie podanego slowa i sprawdza czy znajduje sie takie w tablicy hasel*/
 void basicScounting(char ** tab, int wordID)
 {
-    // printf("Szukam hasel ...\n");
+    printf("Szukam hasel ...\n");
 
     char hashGess[33];
     pthread_mutex_lock(&gettingWordMutex); // zapezpiecz odczyt z tablicy
     
-    // printf("%d. slowo: %s\n", wordID, tab[wordID]);
+    printf("%d. slowo: %s\n", wordID, tab[wordID]);
     bytes2md5(tab[wordID], strlen(tab[wordID]) , hashGess);
-    // printf("W wersji zahaszowanej: %s\n", hashGess);
+    printf("W wersji zahaszowanej: %s\n", hashGess);
 
     long passID = compareHash(hashGess, tab[wordID]);
     if( passID != NOONE)
@@ -155,10 +155,10 @@ void* scouting(void *arg)
      printf("Przeszukuję słownik, producent %d.\n", param->ProdNr);
     for(long i = 0; i < param->UserTabSize; i++)
     {
-        basicScounting(param->Tab, i);
-        prefixScounting(param->Tab, i);
-        postfixScounting(param->Tab, i);
-        postfixAndPrefixScounting(param->Tab, i);
+        basicScounting(*(param->Tab), i);
+        // prefixScounting(param->Tab, i);
+        // postfixScounting(param->Tab, i);
+        // postfixAndPrefixScounting(param->Tab, i);
     }
     finish = true;
 
