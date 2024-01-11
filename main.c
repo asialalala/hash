@@ -188,6 +188,8 @@ int main(int argc, char * argv[])
         exit(-1);
     }
 
+    scouting(wordsTab, wordsTabSize);
+
     // poczekaj az watki sie wykonaja                                                                                                                       
     for (t = 0; t < PROD_NR; t++) {
         pthread_join(prodTab[t], NULL);
