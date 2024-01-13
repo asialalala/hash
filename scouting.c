@@ -155,7 +155,7 @@ void* scouting(void *arg)
     printf("Przeszukuję słownik, producent %ld.\n", prodNr);
     
     long id = NOONE;
-    long last_id = NOONE;
+    
 
     pthread_mutex_lock(&gettingWordMutex);
     while(checkingWordID == NOONE )
@@ -163,23 +163,29 @@ void* scouting(void *arg)
           printf("  Producent czeka na wykonywanie swojego zadania\n");
           pthread_cond_wait(&setCheckingWordID, &gettingWordMutex); // czeka i pozwala odszyfrowywac                                                              
 	    } 
+    long _dictionarySize = dictionarySize;
+    dictionarySize++;
     pthread_mutex_unlock(&gettingWordMutex);
 
     printf("%ld. Doczekane\n",prodNr);
-    while(id < dictionarySize)
+
+    while(id < _dictionarySize)
     {
         pthread_mutex_lock(&gettingWordMutex); // zapezpiecz odczyt id slowa
         id = checkingWordID;
+        checkingWordID++;
         pthread_mutex_unlock(&gettingWordMutex); // zwolnic zabezpieczenie
-        last_id = id;
         
-        if(last_id != id) // jesli konsument nie zdazul zadac nowego zadania nie wykonuj
-        {
-            basicScounting(dictionary, id);
-            // prefixScounting(param->Tab, i);
-            // postfixScounting(param->Tab, i);
-            // postfixAndPrefixScounting(param->Tab, i);
-        }
+        printf("watek %ld sprawdza %ld\n", prodNr, id);
+        // if(last_id != id) // jesli konsument nie zdazul zadac nowego zadania nie wykonuj
+        // {
+        //     basicScounting(dictionary, id);
+        //     // prefixScounting(param->Tab, i);
+        //     // postfixScounting(param->Tab, i);
+        //     // postfixAndPrefixScounting(param->Tab, i);
+        // }
+
+        
         
     }
     
