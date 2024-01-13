@@ -18,15 +18,15 @@ char **wordsTab;
 char **dictionary;
 long dictionarySize;
 
-pthread_mutex_t gettingWordMutex;          // ochrona przed pobieraniem slowa
-// pthread_mutex_t gettingUserMutex;          // ochrona przed pobieraniem danych uzytkownika                                                 
-pthread_cond_t endScouting;                // zakonczenie przeszukiwania przez jeden ze sposobow
-// pthread_cond_t finishCondvar;              // odnalezienie wszystkich hasel      
-pthread_cond_t setCheckingWordID;           // podanie id slowa do sprawdzania
+pthread_mutex_t mainMutex;                      
+pthread_cond_t nextPassCondvar;                 // znalezienie hasla
+pthread_cond_t setCheckingWordID;               // podanie id slowa do sprawdzania
+pthread_cond_t endDictionaryCondvar;            // gyd watki zakacza slownik
 
-bool finish;                                // gdy wszyscy producenci skocza true
 long found;                                 // Id znalezionego hasla
 char * foundPass;                           // rozszyfrowane haslo
 long checkingWordID;                        // id slowa ze slownika wykorzystywanego do lamania hasel
-int flag;                                   // 4 gdy wszytskie sposoby przeszukiwania sie zakoncza
+int flag;                                   // zlicza ilosc watkow, ktore ukonczyly prace ze slownikiem
+
+long PassToCheckID;                         // haslo, ktore aktualnie jest sprawdzane przez watki
 #endif

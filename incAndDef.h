@@ -10,11 +10,11 @@
 
 #define LINE_LEN 200
 #define WORD_LEN 100
-#define USER_NR 182
+#define USER_NR 5
 #define DOUBLE_DIGIT 100
 #define MALLOC_ERROR -1
 #define PROD_NR 10              // liczba watkow szukajacych
 #define NOONE -1                // haslo nieodnalezione
-#define FLAG 1                  // ilosc rodzaji przeszukiwania
+// #define FLAG 1                  // ilosc rodzaji przeszukiwania
 
 #endif

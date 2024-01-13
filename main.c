@@ -116,8 +116,7 @@ int readWords(FILE * file)
 }
 
 int main(int argc, char * argv[])
-{
-    finish = false;  // na poczatku nie ma konca:)  
+{ 
     if(argc != 3)
     {
         printf("Niewlasciwa liczba argumentow.\n");
@@ -171,12 +170,15 @@ int main(int argc, char * argv[])
    
     long t = 0; //ilsoc watkow
     found = NOONE;  // zadne chaslo nie zostalo znalezione
-    checkingWordID = NOONE;
+    checkingWordID = 0; // zacznij przeszukiwac od 0 slowa
+    PassToCheckID = NOONE;
+    flag = false;
     
     // zainicjalizowanie mtexow                                                                                                                             
-    pthread_mutex_init(&gettingWordMutex, NULL);
-    pthread_cond_init(&endScouting, NULL);
-    pthread_cond_init(&setCheckingWordID, NULL);
+    pthread_mutex_init(&mainMutex, NULL);
+    pthread_cond_init(&setCheckingWordID, NULL);    
+    pthread_cond_init(&nextPassCondvar, NULL); 
+    pthread_cond_init(&endDictionaryCondvar, NULL);
 
     // stworz peoducentow
     for(long i = 0; i < PROD_NR; i++)

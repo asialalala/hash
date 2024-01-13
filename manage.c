@@ -5,29 +5,39 @@
 void* manage(void *arg)
 {
     printf("Konsument - watek zarzadzajacy pozostalymi DZIALA!\n");
-    int _dictionarySize = dictionarySize;
-
-    for(int i = 0; i < _dictionarySize; i++)
+    int i = 0;
+    while( i < USER_NR)
     {
-        printf("Konsument zmienia wartosc checkingWordID\n");
-        pthread_mutex_lock(&gettingWordMutex); // zarzadca zajmuje mutex aby sprawdzic, czy ktos juz znalazl haslo                                                         
-        checkingWordID = i;
-        if(checkingWordID == 0)
-            pthread_cond_broadcast(&setCheckingWordID);
-        while( flag < FLAG)
+        pthread_mutex_lock(&mainMutex); // zarzadca zajmuje mutex aby sprawdzic, czy ktos juz znalazl haslo                                                         
+    
+        if(i == 0)
         {
-          printf("  Konsument czeka az watki zakacza przeszukiwanie tego slowa\n");
-          pthread_cond_wait(&endScouting, &gettingWordMutex); // czeka i pozwala odszyfrowywac                                                              
+            PassToCheckID = i;
+            pthread_cond_broadcast(&setCheckingWordID);
+        }
+            
+        // printf("  Konsument czeka az watki znajda jakies slowo\n");
+        while( flag  < PROD_NR)
+        {
+          pthread_cond_wait(&endDictionaryCondvar, &mainMutex); // czeka i pozwala odszyfrowywac   
+        //   printf(" otrzymano komunikat z flaga: %d\n", flag);                                                         
 	    } // gdy dostanie informacje, ze ktorys cos rozszyfrowano  zaznacza jako odszyfrowane i wyswietlakomunikat
 
-        // if(found != NOONE)
-        // {
-        //     userTab[found].broken = true;
-        //     printf("======= Haslo dla %s: %s =======\n", userTab[found].name, foundPass);
-        // }
-        pthread_mutex_unlock(&gettingWordMutex);
+        if(found != NOONE)
+        {
+            // printf("    konsument otrzymal komunikat o znalezieniu hasla\n");
+            found = NOONE;
+            
+        }
+
+        i++;
+        PassToCheckID = i;
+        checkingWordID = 0;
+        flag = 0;
+        pthread_cond_broadcast(&nextPassCondvar);
+        pthread_mutex_unlock(&mainMutex);
     }
 
-
+    printf("Konsument zakonczyl dzialanie\n");
     pthread_exit(NULL);
 }

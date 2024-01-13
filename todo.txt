@@ -5,3 +5,6 @@
 5. zcy tutaj równiez trzeba kolejkowac odgadniete chasla przesylane do konsumenta? chyba tak
     - found i pass do struktury
     - kolekowac je i usuwac (dynamicznie??)
+
+
+    na kazdym kroku trzeba sprawdzac czy haslo, ktore sprawdza jest aktualnym hasle do sprawdzania!
