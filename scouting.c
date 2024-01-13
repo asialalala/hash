@@ -177,6 +177,7 @@ void* scouting(void *arg)
     long _dictionarySize = dictionarySize;
     long _passToCheckID = PassToCheckID;
     long id = checkingWordID;
+    long _userTabSize = userTabSize;
     // int _flag = flag;
     checkingWordID++;
     // printf("%ld. Doczekane\n",prodNr);
@@ -186,7 +187,7 @@ void* scouting(void *arg)
 
 
 
-    while(_passToCheckID < USER_NR)
+    while(_passToCheckID < _userTabSize)
     {
 
          while(id < _dictionarySize)

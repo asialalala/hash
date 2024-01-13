@@ -6,7 +6,12 @@ void* manage(void *arg)
 {
     printf("Konsument - watek zarzadzajacy pozostalymi DZIALA!\n");
     int i = 0;
-    while( i < USER_NR)
+
+    pthread_mutex_lock(&mainMutex);
+    long _userTabSize = userTabSize;
+    pthread_mutex_unlock(&mainMutex);
+
+    while( i < _userTabSize)
     {
         pthread_mutex_lock(&mainMutex); // zarzadca zajmuje mutex aby sprawdzic, czy ktos juz znalazl haslo                                                         
     
