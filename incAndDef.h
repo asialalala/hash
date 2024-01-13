@@ -7,6 +7,7 @@
 #include <openssl/evp.h>       // EVP_MD_CTX, EVP_MD_CTX_new...
 #include <ctype.h>             // toupper
 #include <stdbool.h>           // bool
+#include <signal.h>             
 
 #define LINE_LEN 200
 #define WORD_LEN 100

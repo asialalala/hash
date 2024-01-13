@@ -26,6 +26,7 @@ int readUser(FILE * file)
         char line[LINE_LEN];
         char * tmp;
     long i = 0;
+    bool error = false;
     printf("Czytam baze uzytkownikow...\n");
     while(fgets(line, LINE_LEN, file))
     {
@@ -36,33 +37,39 @@ int readUser(FILE * file)
             // printf("id: %s \t", userTab[i].id);
         }else{
             printf("Blad poczas wczytywania id uzytkownika.\n");
+            error = true;
         }
         tmp = strtok(NULL, " \t"); // kontynuuj czytanie linii
-        if(tmp != NULL)
+        if(tmp != NULL && !error)
         {
             strcpy(userTab[i].pass, tmp); // czytaj haslo
             // printf("pass: %s \t", userTab[i].pass);
-        }else{
+        }else if(tmp != NULL){
            printf("Blad poczas wczytywania hasla uzytkownika.\n");
+           error = true;
         }
         tmp = strtok(NULL, "\t"); // kontynuuj czytanie linii
-        if(tmp != NULL)
+        if(tmp != NULL && !error)
         {
             strcpy(userTab[i].mail, tmp); // czytaj mail
             // printf("mail: %s \t", userTab[i].mail);
-        }else{
+        }else if(tmp != NULL){
             printf("Blad poczas wczytywania maila uzytkownika.\n");
+            error = true;
         }
         tmp = strtok(NULL, "\n"); // kontynuuj czytanie linii
-        if(tmp != NULL)
+        if(tmp != NULL && !error)
         {
             strcpy(userTab[i].name, tmp); // czytaj nazwe
             // printf("name: %s \n", userTab[i].name);
-        }else{
+        }else if(tmp != NULL){
             printf("Blad poczas wczytywania nazwy uzytkownika.\n");
+            error = true;
         }
         userTab[i].broken = false;
-        i++;
+        if(!error)
+            i++;
+        error = false;
     }
     printf("Wczytano %ld zestawow danych.\n", i);
     return i;
@@ -152,6 +159,7 @@ int main(int argc, char * argv[])
     fclose(fPass);
     fclose(fWord);
 
+    
     dictionarySize = createDictionary(wordsBaseTabSize * 3, wordsBaseTabSize);
     if(dictionarySize == MALLOC_ERROR)
     {
@@ -180,6 +188,7 @@ int main(int argc, char * argv[])
     pthread_cond_init(&nextPassCondvar, NULL); 
     pthread_cond_init(&endDictionaryCondvar, NULL);
 
+    signal(SIGHUP, summary);    // obsluguj sygnal
     // stworz peoducentow
     for(long i = 0; i < PROD_NR; i++)
     {

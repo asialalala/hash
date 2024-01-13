@@ -1,6 +1,22 @@
 #include "manage.h"
 #include "global.h" // czumu tu musze to dodwac? ahh
 
+
+// wyswietla podsumowanie, gdy zostanie wslany sygnal i na koncu
+void summary()
+{
+    pthread_mutex_lock(&mainMutex);
+    printf("\nPodsumowanie:\n");
+    for(int i = 0; i < userTabSize; i++)
+    {
+        if(userTab[i].broken)
+        {
+            printf("Haslo uzytkownika %s: %s\n",userTab[i].name, userTab[i].brokenPass);
+        }
+    }
+    pthread_mutex_unlock(&mainMutex);
+}
+
 // zarzadza odgadnietymi haslami i watkami poszukujacymi hasel
 void* manage(void *arg)
 {
@@ -43,16 +59,7 @@ void* manage(void *arg)
         pthread_mutex_unlock(&mainMutex);
     }
 
-    pthread_mutex_lock(&mainMutex);
-    printf("\nPodsumowanie:\n");
-    for(int i = 0; i < _userTabSize; i++)
-    {
-        if(userTab[i].broken)
-        {
-            printf("Haslo uzytkownika %s: %s\n",userTab[i].name, userTab[i].brokenPass);
-        }
-    }
-    pthread_mutex_unlock(&mainMutex);
+    summary();
 
     // printf("Konsument zakonczyl dzialanie\n");
     pthread_exit(NULL);
