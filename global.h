@@ -26,7 +26,6 @@ pthread_cond_t setCheckingWordID;               // podanie id slowa do sprawdzan
 pthread_cond_t endDictionaryCondvar;            // gyd watki zakacza slownik
 
 long found;                                 // Id znalezionego hasla
-char * foundPass;                           // rozszyfrowane haslo
 long checkingWordID;                        // id slowa ze slownika wykorzystywanego do lamania hasel
 int flag;                                   // zlicza ilosc watkow, ktore ukonczyly prace ze slownikiem
 

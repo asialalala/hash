@@ -49,7 +49,6 @@ void basicScounting(char ** tab, int wordID, long prodNr, long passID)
         if(compareHash(hashGess, tab[wordID], passID) )
         {
             found = passID;             // zapisz numer hasla w bazie uzytkownikow
-            foundPass = tab[wordID];    // zapisz znalezione haslo w postaci niehaszowej
         }
     }
     
@@ -78,7 +77,6 @@ void prefixScounting(char ** tab, int wordID, long prodNr, long passID)
             if(compareHash(hashGess, newWord, passID) )
             {
                 found = passID;           // zapisz numer hasla w bazie uzytkownikow
-                foundPass = newWord;     // zapisz znalezione haslo w postaci niehaszowej
                 pthread_mutex_unlock(&mainMutex); 
                 break;
             }
@@ -112,7 +110,6 @@ void postfixScounting(char ** tab, int wordID, long prodNr, long passID)
             if(compareHash(hashGess, newWord, passID) )
             {
                 found = passID;           // zapisz numer hasla w bazie uzytkownikow
-                foundPass = newWord;     // zapisz znalezione haslo w postaci niehaszowej
                 pthread_mutex_unlock(&mainMutex); 
                 break;
             }
@@ -148,7 +145,6 @@ void postfixAndPrefixScounting(char ** tab, int wordID, long prodNr, long passID
                 if(compareHash(hashGess, newWord, passID) )
                 {
                     found = passID;           // zapisz numer hasla w bazie uzytkownikow
-                    foundPass = newWord;     // zapisz znalezione haslo w postaci niehaszowej
                     pthread_mutex_unlock(&mainMutex); 
                     break;
                 }
