@@ -166,6 +166,7 @@ int main(int argc, char * argv[])
         printf("Nie udało sie utworzyc slownika.\n");
         return EXIT_FAILURE;
     }
+    // printf("Utworzono slownik.\n");
 
     // paramery potrzebne do utworzenia watkow
     pthread_attr_t attr;
