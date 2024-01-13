@@ -5,3 +5,4 @@
 5. zcy tutaj równiez trzeba kolejkowac odgadniete chasla przesylane do konsumenta? chyba tak
     - found i pass do struktury
     - kolekowac je i usuwac (dynamicznie??)
+6. stworzyc statyczna tablice z odgadnietymi haslami, ktora bedzie ustawial kondument

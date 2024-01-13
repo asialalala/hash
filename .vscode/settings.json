@@ -2,6 +2,12 @@
     "files.associations": {
         "createwordstabs.h": "c",
         "incanddef.h": "c",
-        "stdbool.h": "c"
+        "stdbool.h": "c",
+        "random": "c",
+        "__threading_support": "c",
+        "atomic": "c",
+        "mutex": "c",
+        "istream": "c",
+        "ostream": "c"
     }
 }

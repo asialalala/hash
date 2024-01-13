@@ -25,8 +25,17 @@ pthread_cond_t foundPassCond;              // odnalezienie wszystkich hasel
 pthread_cond_t setCheckingWordIDCond;           // podanie id slowa do sprawdzania
 
 bool finish;                                // gdy wszyscy producenci skocza true
-long found;                                 // Id znalezionego hasla
-char * foundPass;                           // rozszyfrowane haslo
+
 long checkingWordID;                        // id slowa ze slownika wykorzystywanego do lamania hasel
 int flag;                                   // 4 gdy wszytskie sposoby przeszukiwania sie zakoncza
+long basicCheckingPassID;                   // Id hasla, z ktorym teraz porownywane jest odgadywane slowo w wersji podstawowej
+bool found;                                 // informacja o tym, ze cos zostalo odnalezione
+struct infoFroCons
+{
+    long foundID;                                 // Id znalezionego hasla
+    char * foundPass;                           // rozszyfrowane haslo
+};
+
+struct infoFroCons infoTab[182];            // tablica z informacjami dla konsumenta
+
 #endif

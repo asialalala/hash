@@ -1,4 +1,4 @@
-//gcc -pedantic -Wall Out/hashTry.c -o try.out -lssl -lcrypto -pthread
+//gcc -pedantic -Wall hashTry.c -o try.out -lssl -lcrypto -pthread
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>             // strcpy, strcmp

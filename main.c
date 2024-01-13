@@ -170,9 +170,17 @@ int main(int argc, char * argv[])
     int rc;
    
     long t = 0; //ilsoc watkow
-    found = NOONE;  // zadne chaslo nie zostalo znalezione
     checkingWordID = NOONE;
-    
+    basicCheckingPassID = 0;
+
+    for(int i = 0; i < 182; i++)
+    {
+        infoTab[i].foundID = NOONE;
+        infoTab[i].foundPass = "";
+    }
+    found = false;
+    flag = 0;
+
     // zainicjalizowanie mtexow                                                                                                                             
     pthread_mutex_init(&gettingWordMutex, NULL);
     pthread_cond_init(&foundPassCond, NULL);

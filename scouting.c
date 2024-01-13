@@ -16,45 +16,73 @@ void bytes2md5(const char *data, int len, char *md5buf) {
 }
 
 /* sprawdza czy haslo gess znajduje sie w tablicy hasel userTab*/
-long compareHash(char * gess, char * pass)
+bool compareHash(char * gess, char * pass, long prodNr)
 {
-    for(long i = 0; i < USER_NR; i++)
+    // printf("Funckja porownania'\n");
+    pthread_mutex_lock(&gettingWordMutex);
+    long ID = basicCheckingPassID;
+    long _userTabSize = userTabSize;
+    pthread_mutex_unlock(&gettingWordMutex);
+    
+    // printf("watek %d, ID %d\n", prodNr, ID);
+    while(ID < _userTabSize)
     {
-        if(userTab[i].broken == false)
+        pthread_mutex_lock(&gettingWordMutex);
+        ID = basicCheckingPassID;
+        // printf(" pobrano ID hasla %ld\n", ID);
+    
+        if(userTab[ID].broken == false && ID < _userTabSize)
         {
-            // printf("    Porownuje %s z %s\n", gess, userTab[i].pass);
-            if(!strcmp(gess, userTab[i].pass ))
+            // printf("    Porownuje (%s) %s  z %s na miejscu %ld\n", pass, gess, userTab[ID].pass, ID);
+            if(!strcmp(gess, userTab[ID].pass ))
             {
-                // printf("=========== znaleziono %s ===========\n", gess);
-               return i; // odnaleziono
+                // do podsumowania
+                infoTab[prodNr].foundID = ID;           // zapisz numer hasla w bazie uzytkownikow
+                infoTab[prodNr].foundPass = pass;    // zapisz znalezione haslo w postaci niehaszowej
+                
+                userTab[ID].broken = true;
+                printf("======= Haslo dla %s: %s =======\n", userTab[ID].name, pass);
+                basicCheckingPassID++; // nie znaleziono hasla
+                // printf("Zweikszono basicCheckingPassID do %ld\n", basicCheckingPassID);
+                // printf("Pozwolenie na dzialanie innym watkom\n");
+                pthread_mutex_unlock(&gettingWordMutex);  //pozwol szukac innym watkom
+                return true; // zakoncz szukanie hasla dla tego rpzypuszczenia, bo juz znalezione
             }
         }
+        basicCheckingPassID++; // nie znaleziono hasla
+        // printf("Zweikszono basicCheckingPassID do %ld i pozwolenie na dzalanie innym watkom\n", basicCheckingPassID);
+        pthread_mutex_unlock(&gettingWordMutex);
+        
     }
-    return NOONE; // nie znaleziono
+    // printf("watek %d Zwracam\n", prodNr);
+    return false;
 }
 
 /* tworzy hasze na podstawie podanego slowa i sprawdza czy znajduje sie takie w tablicy hasel*/
-void basicScounting(char ** tab, int wordID)
+void basicScounting(char ** tab, long wordID, long prodNr)
 {
     // printf("Szukam hasel podstawowych...\n");
 
     char hashGess[33];
-    pthread_mutex_lock(&gettingWordMutex); // zapezpiecz odczyt z tablicy
-    
-    // printf("%d. slowo: %s\n", wordID, tab[wordID]);
-    bytes2md5(tab[wordID], strlen(tab[wordID]) , hashGess);
+
+    pthread_mutex_lock(&gettingWordMutex); // zabezpiecz odczyt z tablicy
+    char * word = tab[wordID];
+    pthread_mutex_unlock(&gettingWordMutex);
+
+    // printf("%ld. slowo: %s\n", wordID, word);
+    bytes2md5(word, strlen(word) , hashGess);
     // printf("W wersji zahaszowanej: %s\n", hashGess);
 
-    long passID = compareHash(hashGess, tab[wordID]);
-    if( passID != NOONE)
-    {
-        found = passID;             // zapisz numer hasla w bazie uzytkownikow
-        foundPass = tab[wordID];    // zapisz znalezione haslo w postaci niehaszowej
-        pthread_cond_signal(&foundPassCond);
-    }
+    compareHash(hashGess, word, prodNr);
 
-    
-    pthread_mutex_unlock(&gettingWordMutex); // odbezpiecz odczyt z tablicy
+    pthread_mutex_lock(&gettingWordMutex);
+    if(flag < 1)
+    {
+        // printf("flaga++\n");
+        flag++;
+    }
+        
+    pthread_mutex_unlock(&gettingWordMutex);
 }
 
 // szuka hasel z prefiksami
@@ -75,12 +103,12 @@ void prefixScounting(char ** tab, int wordID)
 
         bytes2md5(newWord, strlen(newWord) , hashGess);
         // printf("W wersji zahaszowanej: %s\n", hashGess);
-        long passID = compareHash(hashGess, tab[wordID]);
-        if( passID != NOONE)
-        {
-            found = passID;             // zapisz numer hasla w bazie uzytkownikow
-            foundPass = tab[wordID];    // zapisz znalezione haslo w postaci niehaszowej
-        }
+        // long passID = compareHash(hashGess, tab[wordID]);
+        // // if( passID != NOONE)
+        // {
+        //     found = passID;             // zapisz numer hasla w bazie uzytkownikow
+        //     foundPass = tab[wordID];    // zapisz znalezione haslo w postaci niehaszowej
+        // }
 
         pthread_mutex_unlock(&gettingWordMutex); // odbezpiecz odczyt z tablicy
     }
@@ -104,12 +132,12 @@ void postfixScounting(char ** tab, int wordID)
         
         bytes2md5(newWord, strlen(newWord) , hashGess);
         // printf("W wersji zahaszowanej: %s\n", hashGess);
-        long passID = compareHash(hashGess, tab[wordID]);
-        if( passID != NOONE)
-        {
-            found = passID;             // zapisz numer hasla w bazie uzytkownikow
-            foundPass = tab[wordID];    // zapisz znalezione haslo w postaci niehaszowej
-        }
+        // long passID = compareHash(hashGess, tab[wordID]);
+        // if( passID != NOONE)
+        // {
+        //     found = passID;             // zapisz numer hasla w bazie uzytkownikow
+        //     foundPass = tab[wordID];    // zapisz znalezione haslo w postaci niehaszowej
+        // }
 
         pthread_mutex_unlock(&gettingWordMutex); // odbezpiecz odczyt z tablicy
     }
@@ -135,13 +163,13 @@ void postfixAndPrefixScounting(char ** tab, int wordID)
 
             bytes2md5(newWord, strlen(newWord) , hashGess);
             // printf("W wersji zahaszowanej: %s\n", hashGess);
-            long passID = compareHash(hashGess, tab[wordID]);
-            if( passID != NOONE)
-            {
-                found = passID;             // zapisz numer hasla w bazie uzytkownikow
-                foundPass = tab[wordID];    // zapisz znalezione haslo w postaci niehaszowej
-                pthread_cond_broadcast(&setCheckingWordIDCond);
-            }
+            // long passID = compareHash(hashGess, tab[wordID]);
+            // if( passID != NOONE)
+            // {
+            //     found = passID;             // zapisz numer hasla w bazie uzytkownikow
+            //     foundPass = tab[wordID];    // zapisz znalezione haslo w postaci niehaszowej
+            //     pthread_cond_signal(&setCheckingWordIDCond);
+            // }
 
             pthread_mutex_unlock(&gettingWordMutex); // zapezpiecz odczyt z tablicy
         }
@@ -154,7 +182,7 @@ void postfixAndPrefixScounting(char ** tab, int wordID)
 void* scouting(void *arg)
 {
     long prodNr = (long)arg;
-    printf("Przeszukuję słownik, producent %ld.\n", prodNr);
+    // printf("Przeszukuję słownik, producent %ld.\n", prodNr);
     
     long id = NOONE;
     long last_id = NOONE;
@@ -162,31 +190,40 @@ void* scouting(void *arg)
     pthread_mutex_lock(&gettingWordMutex);
     while(checkingWordID == NOONE )
         {
-          printf("  Producent czeka na wykonywanie swojego zadania\n");
+        //   printf("  Producent czeka na wykonywanie swojego zadania\n");
           pthread_cond_wait(&setCheckingWordIDCond, &gettingWordMutex); // czeka i pozwala odszyfrowywac                                                              
 	    } 
+    // printf("%ld. Doczekane\n",prodNr);
+    long _dictionarySize = dictionarySize;
     pthread_mutex_unlock(&gettingWordMutex);
 
-    printf("%ld. Doczekane\n",prodNr);
+    
     while(id < dictionarySize)
     {
         pthread_mutex_lock(&gettingWordMutex); // zapezpiecz odczyt id slowa
         id = checkingWordID;
-        printf("Odczytano id: %ld w producencie %ld\n", id, prodNr );
+        // printf("Odczytano id: %ld w producencie %ld\n", id, prodNr );
         pthread_mutex_unlock(&gettingWordMutex); // zwolnic zabezpieczenie
         
 
-        if(last_id != id && id < dictionarySize) // jesli konsument nie zdazul zadac nowego zadania nie wykonuj
+        if(last_id != id && id < _dictionarySize) // jesli konsument nie zdazul zadac nowego zadania nie wykonuj
         {
-            basicScounting(dictionary, id);
+            basicScounting(dictionary, id, prodNr);
             // prefixScounting(param->Tab, i);
             // postfixScounting(param->Tab, i);
             // postfixAndPrefixScounting(param->Tab, i);
         }
         last_id = id;
+        pthread_mutex_lock(&gettingWordMutex);
+        if(flag >=  FLAG)
+        {
+            // printf("Przesylam sygnal do konsumenta...\n");
+            pthread_cond_signal(&foundPassCond);
+            // printf("Sygnal przesylany do konsumenta\n");
+        }
+        pthread_mutex_unlock(&gettingWordMutex);
     }
-    
-    // finish = true;
+ 
 
     pthread_exit(NULL);
 }
