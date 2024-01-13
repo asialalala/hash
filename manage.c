@@ -40,6 +40,7 @@ void* manage(void *arg)
         {
             basicCheckingPassID = 0;
             flag = 0;
+            pthreadCount = 0;
         }
         pthread_mutex_unlock(&gettingWordMutex);
     }

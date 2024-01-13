@@ -35,7 +35,7 @@ struct infoFroCons
     long foundID;                                 // Id znalezionego hasla
     char * foundPass;                           // rozszyfrowane haslo
 };
-
+int pthreadCount;                         // licznik watkow
 struct infoFroCons infoTab[182];            // tablica z informacjami dla konsumenta
 
 #endif

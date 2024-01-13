@@ -209,17 +209,23 @@ void* scouting(void *arg)
         if(last_id != id && id < _dictionarySize) // jesli konsument nie zdazul zadac nowego zadania nie wykonuj
         {
             basicScounting(dictionary, id, prodNr);
-            // prefixScounting(param->Tab, i);
+            // prefixScounting(dictionary, id);
             // postfixScounting(param->Tab, i);
             // postfixAndPrefixScounting(param->Tab, i);
         }
         last_id = id;
         pthread_mutex_lock(&gettingWordMutex);
-        if(flag >=  FLAG)
+        printf(" ilsc zakonczonych watkow: %d\n", pthreadCount);
+        if(flag >=  FLAG )              // to powinna byc bariera, ale u mnie nie ma implementacji bariery
         {
-            // printf("Przesylam sygnal do konsumenta...\n");
-            pthread_cond_signal(&foundPassCond);
-            // printf("Sygnal przesylany do konsumenta\n");
+            pthreadCount++;
+            if(pthreadCount == PROD_NR)
+            {
+                // printf("Przesylam sygnal do konsumenta...\n");
+                pthread_cond_signal(&foundPassCond);
+                // printf("Sygnal przesylany do konsumenta\n");
+            }
+            
         }
         pthread_mutex_unlock(&gettingWordMutex);
     }

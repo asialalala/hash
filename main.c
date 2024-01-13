@@ -180,6 +180,7 @@ int main(int argc, char * argv[])
     }
     found = false;
     flag = 0;
+    pthreadCount = 0;
 
     // zainicjalizowanie mtexow                                                                                                                             
     pthread_mutex_init(&gettingWordMutex, NULL);
