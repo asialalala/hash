@@ -10,12 +10,14 @@ struct user
     char mail[100];
     char name[100];
     bool broken;                    // zmienic na true, gdy zostanie zlamane
+    char brokenPass[100];           // jesli udalo sie zlamac
 };
 struct user userTab[USER_NR];
 long userTabSize;
 
 char **wordsTab;
 char **dictionary;
+
 long dictionarySize;
 
 pthread_mutex_t mainMutex;                      
@@ -27,6 +29,7 @@ long found;                                 // Id znalezionego hasla
 char * foundPass;                           // rozszyfrowane haslo
 long checkingWordID;                        // id slowa ze slownika wykorzystywanego do lamania hasel
 int flag;                                   // zlicza ilosc watkow, ktore ukonczyly prace ze slownikiem
+
 
 long PassToCheckID;                         // haslo, ktore aktualnie jest sprawdzane przez watki
 #endif

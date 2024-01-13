@@ -24,6 +24,7 @@ bool compareHash(char * gess, char * pass, long passID)
         {
             printf("=========== znaleziono %s ===========\n", pass );
             userTab[passID].broken = true;
+            strcpy(userTab[passID].brokenPass, pass); 
            return true; // odnaleziono
         }
     
@@ -230,6 +231,6 @@ void* scouting(void *arg)
         
     }
 
-    printf("Watek %ld zakonczyl prace.\n", prodNr);
+    // printf("Watek %ld zakonczyl prace.\n", prodNr);
     pthread_exit(NULL);
 }

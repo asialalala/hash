@@ -43,6 +43,17 @@ void* manage(void *arg)
         pthread_mutex_unlock(&mainMutex);
     }
 
-    printf("Konsument zakonczyl dzialanie\n");
+    pthread_mutex_lock(&mainMutex);
+    printf("\nPodsumowanie:\n");
+    for(int i = 0; i < _userTabSize; i++)
+    {
+        if(userTab[i].broken)
+        {
+            printf("Haslo uzytkownika %s: %s\n",userTab[i].name, userTab[i].brokenPass);
+        }
+    }
+    pthread_mutex_unlock(&mainMutex);
+
+    // printf("Konsument zakonczyl dzialanie\n");
     pthread_exit(NULL);
 }
