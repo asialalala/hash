@@ -32,7 +32,7 @@ bool compareHash(char * gess, char * pass, long passID)
 }
 
 /* tworzy hasze na podstawie podanego slowa i sprawdza czy znajduje sie takie w tablicy hasel*/
-void basicScounting(char ** tab, int wordID, long prodNr, long passID)
+void basicScounting(char ** tab, char * word, long prodNr, long passID)
 {
    
     pthread_mutex_lock(&mainMutex); 
@@ -42,11 +42,11 @@ void basicScounting(char ** tab, int wordID, long prodNr, long passID)
         // printf("        producent %ld, sprawdza haslo %ld z slowem %d\n", prodNr, passID, wordID);
 
         char hashGess[33];
-        // printf("%d. slowo: %s\n", wordID, tab[wordID]);
-        bytes2md5(tab[wordID], strlen(tab[wordID]) , hashGess);
+        // printf("%d. slowo: %s\n", wordID, word);
+        bytes2md5(word, strlen(word) , hashGess);
         // printf("W wersji zahaszowanej: %s\n", hashGess)
 
-        if(compareHash(hashGess, tab[wordID], passID) )
+        if(compareHash(hashGess, word, passID) )
         {
             found = passID;             // zapisz numer hasla w bazie uzytkownikow
         }
@@ -56,7 +56,7 @@ void basicScounting(char ** tab, int wordID, long prodNr, long passID)
 }
 
 // szuka hasel z prefiksami
-void prefixScounting(char ** tab, int wordID, long prodNr, long passID)
+void prefixScounting(char ** tab, char * word, long prodNr, long passID)
 {
 
     pthread_mutex_lock(&mainMutex); 
@@ -69,7 +69,7 @@ void prefixScounting(char ** tab, int wordID, long prodNr, long passID)
         // printf("W watku %ld %ld. Slowo bazowe: %s\n", prodNr, passID, tab[passID]);
         for(int prefix = 0; prefix < DOUBLE_DIGIT; prefix++)
         {
-            snprintf(newWord, WORD_LEN, "%d%s", prefix, tab[wordID]);
+            snprintf(newWord, WORD_LEN, "%d%s", prefix, word);
             // printf("    Slowo z prefixem %s.\n", newWord);
 
             bytes2md5(newWord, strlen(newWord) , hashGess);
@@ -87,7 +87,7 @@ void prefixScounting(char ** tab, int wordID, long prodNr, long passID)
 }
 
 // szuka hasel z postfiksami
-void postfixScounting(char ** tab, int wordID, long prodNr, long passID)
+void postfixScounting(char ** tab, char * word, long prodNr, long passID)
 {
 
     pthread_mutex_lock(&mainMutex); 
@@ -102,7 +102,7 @@ void postfixScounting(char ** tab, int wordID, long prodNr, long passID)
         // printf("%d. Slowo bazowe: %s\n", i, tab[i]);
         for(int postfix = 1; postfix < DOUBLE_DIGIT; postfix++)
         {
-            snprintf(newWord, WORD_LEN, "%s%d%c", tab[wordID], postfix, '\0');
+            snprintf(newWord, WORD_LEN, "%s%d%c", word, postfix, '\0');
             // printf("    Slowo z postfixem %s.\n", newWord);
 
             bytes2md5(newWord, strlen(newWord) , hashGess);
@@ -120,7 +120,7 @@ void postfixScounting(char ** tab, int wordID, long prodNr, long passID)
 }
 
 // szuka hasel z prefiksami i postfiksami
-void postfixAndPrefixScounting(char ** tab, int wordID, long prodNr, long passID)
+void postfixAndPrefixScounting(char ** tab, char * word, long prodNr, long passID)
 {
     pthread_mutex_lock(&mainMutex); 
 
@@ -137,7 +137,7 @@ void postfixAndPrefixScounting(char ** tab, int wordID, long prodNr, long passID
         {
             for(int postfix = 1; postfix < DOUBLE_DIGIT; postfix++)
             {
-                snprintf(newWord, WORD_LEN, "%d%s%d%c", prefix, tab[wordID], postfix, '\0');
+                snprintf(newWord, WORD_LEN, "%d%s%d%c", prefix, word, postfix, '\0');
                 // printf("    Slowo z postfixem i prefixem %s.\n", newWord);
 
                 bytes2md5(newWord, strlen(newWord) , hashGess);
@@ -163,6 +163,8 @@ void* scouting(void *arg)
 {
     long prodNr = (long)arg;
     // bool setFlag = false;
+    char *newWORD;
+    char *newWord;
     printf("Przeszukuję słownik, producent %ld.\n", prodNr);
 
     pthread_mutex_lock(&mainMutex);
@@ -174,14 +176,12 @@ void* scouting(void *arg)
     long _dictionarySize = dictionarySize;
     long _passToCheckID = PassToCheckID;
     long id = checkingWordID;
+    char * word = wordsTab[id];
     long _userTabSize = userTabSize;
     // int _flag = flag;
     checkingWordID++;
     // printf("%ld. Doczekane\n",prodNr);
     pthread_mutex_unlock(&mainMutex);
-
-    // long lasPasstoCheckID = NOONE;
-
 
 
     while(_passToCheckID < _userTabSize)
@@ -191,10 +191,26 @@ void* scouting(void *arg)
         {
             // setFlag = false;
             // printf("watek %ld sprawdza %ld dla hasla nr %ld. \n", prodNr, id, _passToCheckID);
-            basicScounting(wordsTab, id, prodNr, _passToCheckID);
-            prefixScounting(wordsTab, id, prodNr, _passToCheckID);
-            postfixScounting(wordsTab, id, prodNr, _passToCheckID);
-            postfixAndPrefixScounting(wordsTab, id, prodNr, _passToCheckID);
+            basicScounting(wordsTab, word, prodNr, _passToCheckID);
+            prefixScounting(wordsTab, word, prodNr, _passToCheckID);
+            postfixScounting(wordsTab, word, prodNr, _passToCheckID);
+            postfixAndPrefixScounting(wordsTab, word, prodNr, _passToCheckID);
+
+            createWORD(word,&newWORD);
+            printf("%s\n",newWORD );
+
+            basicScounting(wordsTab, newWORD, prodNr, _passToCheckID);
+            prefixScounting(wordsTab, newWORD, prodNr, _passToCheckID);
+            postfixScounting(wordsTab, newWORD, prodNr, _passToCheckID);
+            postfixAndPrefixScounting(wordsTab, newWORD, prodNr, _passToCheckID);
+
+            createWord(word,&newWord);
+            printf("%s\n",newWord );
+
+            basicScounting(wordsTab, newWord, prodNr, _passToCheckID);
+            prefixScounting(wordsTab, newWord, prodNr, _passToCheckID);
+            postfixScounting(wordsTab, newWord, prodNr, _passToCheckID);
+            postfixAndPrefixScounting(wordsTab, newWord, prodNr, _passToCheckID);
 
             pthread_mutex_lock(&mainMutex); // zapezpiecz odczyt id slowa
 
@@ -205,8 +221,11 @@ void* scouting(void *arg)
                 break;
             }
             id = checkingWordID;
+            word = wordsTab[id];
             checkingWordID++;
             pthread_mutex_unlock(&mainMutex); // zwolnic zabezpieczenie
+            free(newWORD);
+            free(newWord);
         }
 
 
@@ -220,6 +239,7 @@ void* scouting(void *arg)
         }
 
         id = checkingWordID;
+        word = wordsTab[id];
         checkingWordID++;
         _passToCheckID = PassToCheckID;
         pthread_mutex_unlock(&mainMutex);

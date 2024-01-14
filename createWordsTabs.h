@@ -4,7 +4,7 @@
 #include "incAndDef.h"
 #include "global.h"
 
-void createWordsTab(int since, int to, int baseSize);
-void createWORDSTab(int since, int to, int baseSize);
+void createWord(const char * word, char **newWord);
+void createWORD(const char * word, char **newWord);
 
 #endif

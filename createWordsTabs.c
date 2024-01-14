@@ -1,34 +1,32 @@
 #include "createWordsTabs.h"
 
-void dealloc(int size, char ** tab); // from main
-
 /* wypelnia WORDSTab  slowami z wielkich liter*/
-void createWORDSTab(int since, int to, int baseSize)
+void createWORD(const char * word, char **newWord)
 {
-
-    // printf("\nTworze nowa czesc slownika z wielkich liter.\n");
-    //  printf("od: %d do: %d\n", since, to);
-    for (int wordNr = since; wordNr < to; wordNr++)
+    char* temp  = malloc(strlen(word)*sizeof(char));
+    *newWord = malloc(strlen(word)*sizeof(char));
+    for (int i = 0; i < strlen(word); i++)
     {
-        for (int i = 0; i < strlen(wordsTab[wordNr%baseSize]); i++)
-        {
-            printf("%c",dictionary[wordNr][i]);
-            dictionary[wordNr][i] = toupper(wordsTab[wordNr%baseSize][i]);
-        }
-        // printf("%d. Slowo z wielkich liter: %s\n",wordNr, dictionary[wordNr]);
-    } 
+        temp[i] = toupper(word[i]);
+    }
+    strcpy(*newWord, temp);
+
+    free(temp);
+    // printf("Slowo z wielkich liter: %s\n",*newWord);
 }
 
 /* wypelnia WordsTab slowami z wielko litera na poczatki i samymi malymi*/
-void createWordsTab(int since, int to, int baseSize)
+void createWord(const char * word, char **newWord)
 {
-    // printf("Tworze nowa czesc slownika z wielka litera na poczatku i reszta malych.\n");
-    // printf("od: %d do: %d\n", since, to);
-    for (int wordNr = since; wordNr < to; wordNr++)
-    {
-        strncpy(dictionary[wordNr], wordsTab[wordNr%baseSize], strlen(wordsTab[wordNr%baseSize]));
-        dictionary[wordNr][0] = toupper(wordsTab[wordNr%baseSize][0]);
-        // printf("%d. Slowo z wielka litera na poczatku: %s\n",wordNr, dictionary[wordNr]);
-    }
-}
+    char* temp  = malloc(strlen(word)*sizeof(char));
+    *newWord = malloc(strlen(word)*sizeof(char));
 
+    strncpy(temp, word, strlen(word));
+    temp[0] = toupper(word[0]);
+
+    strcpy(*newWord, temp);
+
+    free(temp);
+    // printf("Slowo z wielka litera na poczatku: %s\n",*newWord);
+
+}
