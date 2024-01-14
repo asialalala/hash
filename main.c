@@ -147,8 +147,8 @@ int main(int argc, char * argv[])
         return EXIT_FAILURE;
     }
 
-    int wordsBaseTabSize = readWords(fWord);
-    if(wordsBaseTabSize == MALLOC_ERROR)
+    dictionarySize = readWords(fWord);
+    if(dictionarySize == MALLOC_ERROR)
     {
         printf("Nie udało sie wczytac slownika.\n");
         return EXIT_FAILURE;
@@ -160,12 +160,12 @@ int main(int argc, char * argv[])
     fclose(fWord);
 
     
-    dictionarySize = createDictionary(wordsBaseTabSize * 3, wordsBaseTabSize);
-    if(dictionarySize == MALLOC_ERROR)
-    {
-        printf("Nie udało sie utworzyc slownika.\n");
-        return EXIT_FAILURE;
-    }
+    // dictionarySize = createDictionary(wordsBaseTabSize * 3, wordsBaseTabSize);
+    // if(dictionarySize == MALLOC_ERROR)
+    // {
+    //     printf("Nie udało sie utworzyc slownika.\n");
+    //     return EXIT_FAILURE;
+    // }
     // printf("Utworzono slownik.\n");
 
     // paramery potrzebne do utworzenia watkow
@@ -214,7 +214,6 @@ int main(int argc, char * argv[])
     }
     pthread_join(manager, NULL);
 
-    dealloc(wordsBaseTabSize, wordsTab);
-    // dealloc(wordsBaseTabSize*3, dictionary);
+    dealloc(dictionarySize, wordsTab);
     return EXIT_SUCCESS;
 }

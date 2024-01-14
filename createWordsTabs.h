@@ -6,6 +6,5 @@
 
 void createWordsTab(int since, int to, int baseSize);
 void createWORDSTab(int since, int to, int baseSize);
-int createDictionary(int wordsTabSize, int baseSize);
 
 #endif

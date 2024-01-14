@@ -191,10 +191,10 @@ void* scouting(void *arg)
         {
             // setFlag = false;
             // printf("watek %ld sprawdza %ld dla hasla nr %ld. \n", prodNr, id, _passToCheckID);
-            basicScounting(dictionary, id, prodNr, _passToCheckID);
-            prefixScounting(dictionary, id, prodNr, _passToCheckID);
-            postfixScounting(dictionary, id, prodNr, _passToCheckID);
-            postfixAndPrefixScounting(dictionary, id, prodNr, _passToCheckID);
+            basicScounting(wordsTab, id, prodNr, _passToCheckID);
+            prefixScounting(wordsTab, id, prodNr, _passToCheckID);
+            postfixScounting(wordsTab, id, prodNr, _passToCheckID);
+            postfixAndPrefixScounting(wordsTab, id, prodNr, _passToCheckID);
 
             pthread_mutex_lock(&mainMutex); // zapezpiecz odczyt id slowa
 
